@@ -1,7 +1,8 @@
-(function (factory) {
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  factory();
-}(function () { 'use strict';
+  (global = global || self, global['riot-meiosis'] = factory());
+}(this, function () { 'use strict';
 
   /**
    * Cancel token
@@ -364,9 +365,11 @@
       };
   }
 
-  module.exports = {
+  var index = {
       stateManager,
       riotPlugin
   };
+
+  return index;
 
 }));

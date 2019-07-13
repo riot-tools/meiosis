@@ -1,7 +1,7 @@
 import stateManager from './lib/manager';
 import riotPlugin from './lib/plugin';
 
-module.exports = {
+export default {
     stateManager,
     riotPlugin
 }
