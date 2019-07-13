@@ -2,9 +2,12 @@
   "name": "riot-meiosis",
   "version": "0.1.0",
   "description": "Meiosis state manager for Riot using Erre",
-  "main": "index.js",
+  "main": "riot-meiosis.js",
+  "module": "index.js",
+  "js:next": "index.js",
   "scripts": {
-    "test": "mocha -r @babel/register -r @babel/polyfill --recursive"
+    "test": "mocha -r @babel/register -r @babel/polyfill --recursive",
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -25,7 +28,6 @@
     "url": "https://github.com/damusix/riot-meiosis/issues"
   },
   "homepage": "https://github.com/damusix/riot-meiosis#readme",
-
   "babel": {
     "presets": [
       "@babel/preset-env"
@@ -40,6 +42,8 @@
     "@babel/preset-env": "^7.5.4",
     "@babel/register": "^7.4.4",
     "chai": "^4.2.0",
-    "mocha": "^6.1.4"
+    "mocha": "^6.1.4",
+    "rollup": "^1.16.7",
+    "rollup-plugin-node-resolve": "^5.2.0"
   }
 }

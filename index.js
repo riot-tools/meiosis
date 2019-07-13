@@ -1,5 +1,5 @@
-const stateManager = require('./lib/manager');
-const riotPlugin = require('./lib/plugin');
+import stateManager from './lib/manager';
+import riotPlugin from './lib/plugin';
 
 module.exports = {
     stateManager,
