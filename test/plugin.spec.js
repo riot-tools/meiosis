@@ -6,13 +6,18 @@ import Plugin from '../lib/plugin';
 const stub = {
     wasUnmounted: () => {},
     wasUpdated: () => {},
+    wasConnected: () => {},
     state: {
-        existingState: true
+        existingState: true,
+        nestedState: {
+            hasCandy: true
+        }
     },
     component: {
 
         onUnmounted: () => stub.wasUnmounted(),
-        update: (val) => stub.wasUpdated(val)
+        update: (val) => stub.wasUpdated(val),
+        connect: (...args) => stub.wasConnected(...args)
     }
 };
 
@@ -35,7 +40,28 @@ describe('Riot state plugin', function () {
         expect(stub.plugin).to.be.a('function');
     });
 
-    it('should bind state related functionality to component', function () {
+    it('should not bind state if connect is not defined', function () {
+
+        const component = { ...stub.component };
+
+        delete component.connect;
+
+        expect(component).to.not.include.keys(
+            'getState',
+            'stream',
+            'mainStream'
+        );
+
+        stub.plugin(component);
+
+        expect(component).to.not.include.keys(
+            'getState',
+            'stream',
+            'mainStream'
+        );
+    });
+
+    it('should bind state if connect is passed', function () {
 
         expect(stub.component).to.not.include.keys(
             'getState',
@@ -43,6 +69,7 @@ describe('Riot state plugin', function () {
             'mainStream'
         )
         stub.plugin(stub.component);
+
         expect(stub.component).to.include.keys(
             'getState',
             'stream',
@@ -58,18 +85,67 @@ describe('Riot state plugin', function () {
         expect(stub.component.stream).to.equal(children[0]);
     });
 
-    it('should have copied initial state into component state', function () {
+    it('should copy initial state into component state', function () {
 
-        expect(stub.component.state).to.include.keys(...Object.keys(stub.manager.getState()));
-        expect(stub.component.state.existingState).to.eq(true);
+        const component = { ...stub.component };
+
+        stub.wasConnected = (appState, state) => ({
+            ...state,
+            ...appState
+        });
+
+        stub.plugin(component);
+
+        expect(component.state).to.include.keys(...Object.keys(stub.manager.getState()));
+        expect(component.state.existingState).to.eq(true);
+    });
+
+    it('should copy a section of state into component state', function () {
+
+        const component = { ...stub.component };
+
+        stub.wasConnected = (appState, state) => ({
+            ...state,
+            ...appState.nestedState
+        });
+
+        stub.plugin(component);
+
+        const { nestedState } = stub.manager.getState()
+
+        expect(component.state).to.include.keys(...Object.keys(nestedState));
+        expect(component.state.hasCandy).to.eq(true);
     });
 
     it('should update component on stream push', async () => {
+
+        stub.plugin(stub.component);
 
         let updatedState = false;
         const update = { success: true };
         stub.wasUpdated = (newState) => {
 
+            updatedState = true;
+        }
+
+        await stub.component.stream.push(update);
+        expect(updatedState).to.eq(false);
+
+    });
+
+    it('should not update if state has not changed', async () => {
+
+        stub.wasConnected = (appState, state) => ({
+            ...state,
+            ...appState
+        });
+
+        stub.plugin(stub.component);
+
+        let updatedState = false;
+        const update = { success: true };
+
+        stub.wasUpdated = (newState) => {
 
             expect(newState).to.include.keys('success');
             expect(newState.success).to.eq(true);
