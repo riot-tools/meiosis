@@ -293,8 +293,18 @@
   erre.install('clone', clone);
 
   /**
+   * @typedef {Object} StateManager
+   * @property {function} getState Returns entire application state
+   * @property {function} mergeState Merges an object into current app state
+   * @property {object} stream Main app Erre stream
+   * @property {function} cloneStream Clones application stream
+   */
+
+  /**
    * Returns an API to manipulate application state using Erre streams.
-   * @param {object} initialState - Starting state object
+   * @param {object} initialState Starting state object
+   *
+   * @return {StateManager} Functions to manage state
    */
   function stateManager (initialState = {}) {
 
@@ -307,6 +317,7 @@
 
       const cloneStream = () => erre.clone(stream);
 
+
       return {
           getState,
           mergeState,
@@ -314,6 +325,101 @@
           cloneStream
       };
   }
+
+  const arrayMatches = (arr1, arr2) => {
+
+      if (arr1.length !== arr2.length) {
+
+          return false;
+      }
+
+      for (const item of arr1) {
+          if (!arr2.includes(item)) {
+              return false
+          }    }
+
+      return true;
+  };
+
+  const primitives = [
+      String,
+      Number,
+      Boolean,
+      BigInt,
+      Symbol,
+      null,
+      undefined
+  ];
+
+  const stateHasChanged = (change, current) => {
+
+      const currentKeys = Object.keys(current);
+      const changeKeys = Object.keys(change);
+
+      // If there are more keys in one than the other,
+      // there is a change
+      if (currentKeys.length !== changeKeys.length) {
+          return true;
+      }
+
+      let hasChange = false;
+
+      for (const key of currentKeys) {
+
+          // If hasChange has changed to true, stop looping
+          if (hasChange) {
+              break;
+          }
+
+          // Make sure none of the keys have changed
+          hasChange = !changeKeys.includes(key);
+      }
+
+      if (hasChange) return true;
+
+      // Compare keys
+      for (const key in current) {
+
+          // Both objects must have key
+          if (current.hasOwnProperty(key) && change.hasOwnProperty(key)) {
+
+              const value = current[key];
+              const compare = change[key];
+
+              // If values are primitives, compare directly
+              if (primitives.includes(value) || primitives.includes(value.constructor)) {
+
+                  if (value !== compare) return true;
+              }
+
+              // If value constructor changes
+              if (value.constructor !== compare.constructor) {
+
+                  return true;
+              }
+
+              // Check that array does not match
+              if (value.constructor === Array) {
+
+                  return !arrayMatches(value, compare);
+              }
+
+              // Recurse if value is an object
+              if (typeof value === 'object') {
+
+                  return stateHasChanged(value, compare);
+              }
+          }
+          else {
+              return true;
+          }
+      }
+  };
+
+  var utils = /*#__PURE__*/Object.freeze({
+    arrayMatches: arrayMatches,
+    stateHasChanged: stateHasChanged
+  });
 
   /**
    * Returns a Riot plugin for installing meiosis state management
@@ -331,17 +437,14 @@
        * would trigger updates to all subscribed components
        * https://github.com/riot/riot/issues/2708#issuecomment-501443045 *
        */
-      return function (component) {
+      const implementPlugin = (component) => {
 
           // store the original onUnmounted call if it exists
           const { onUnmounted, state } = component;
 
           // Merge global state to local state.
           // Global state supersedes local state.
-          component.state = {
-              ...state,
-              ...getState()
-          };
+          component.state = component.connect(getState(), state);
 
           // Allow getting current state
           component.getState = getState;
@@ -361,13 +464,28 @@
           };
 
           // When state is updated, update component state.
-          component.stream.on.value(newState => component.update(newState));
+          component.stream.on.value(newState => {
+
+              const { state } = component;
+              const change = component.connect(newState, state);
+
+              if (stateHasChanged(change, state)) component.update(change);
+          });
+      };
+
+      return function (component) {
+
+          if (component.connect) {
+
+              implementPlugin(component);
+          }
       };
   }
 
   var index = {
       stateManager,
-      riotPlugin
+      riotPlugin,
+      utils
   };
 
   return index;
