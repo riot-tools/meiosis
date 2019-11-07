@@ -96,25 +96,12 @@ In your `.riot` files:
 
         const component = {
 
-            // This is required if you want to connect your component to state.
-            // It is similar to react-redux's `connect`.
-            // Also, if the new state is the same as the old state,
-            // Your component will not update
-            connect(newState, state) {
-
-
-                return {
-                    ...state,
-                    ...newState.nested
-                }
-            },
-
             onBeforeMount() {
 
-                // Can acccess the following:
-                this.getState(); // Gets the entire app state
-                this.stream // The cloned state stream. Only receives updates.
-                this.mainStream // The application stream. Can be pushed updates
+                // connect will respect original onBeforeMount
+                this.state = {
+                    lala: true
+                }
             }
         }
 
