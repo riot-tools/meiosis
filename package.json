@@ -6,7 +6,8 @@
   "module": "index.js",
   "js:next": "index.js",
   "scripts": {
-    "test": "mocha -r @babel/register -r @babel/polyfill --recursive",
+    "test": "npm run build && mocha -r @babel/register -r @babel/polyfill --recursive",
+    "watch": "nodemon -w lib -w test -x 'npm run test'",
     "build": "rollup -c"
   },
   "repository": {

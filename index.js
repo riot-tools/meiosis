@@ -1,9 +1,14 @@
-import stateManager from './lib/manager';
-import riotPlugin from './lib/plugin';
+import connect from './lib/connect';
+import { getState } from './lib/state';
+import { createStream, getStream } from './lib/stream';
 import * as utils from './lib/utils';
 
+console.log('createStream', createStream)
+
 export default {
-    stateManager,
-    riotPlugin,
+    connect,
+    getState,
+    createStream,
+    getStream,
     utils
-}
+};
