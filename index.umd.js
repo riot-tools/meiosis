@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    (global = global || self, global.RiotMeiosis = factory());
-}(this, function () { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (global = global || self, factory(global.RiotMeiosis = {}));
+}(this, function (exports) { 'use strict';
 
     const arrayMatches = (arr1, arr2) => {
 
@@ -94,7 +94,7 @@
         }
     };
 
-    var utils = /*#__PURE__*/Object.freeze({
+    var Utilities = /*#__PURE__*/Object.freeze({
         arrayMatches: arrayMatches,
         stateHasChanged: stateHasChanged
     });
@@ -116,6 +116,11 @@
 
         return state;
     };
+
+    var StateHelpers = /*#__PURE__*/Object.freeze({
+        getState: getState,
+        setState: setState
+    });
 
     /**
      * Cancel token
@@ -390,6 +395,11 @@
         return stream;
     };
 
+    var StreamHelpers = /*#__PURE__*/Object.freeze({
+        getStream: getStream,
+        createStream: createStream$1
+    });
+
     /**
      * Decorator for implement state management on a Riot component.
      * Application state is mapped to Component state, stream updates
@@ -399,7 +409,7 @@
      * @param {function} mapToState - Required. Function to reduce application state to relevant app state
      * @param {function|object} mapToComponent - Optional. Map a function or object onto a component.
      */
-    function connect (mapToState, mapToComponent) {
+    function Connect (mapToState, mapToComponent) {
 
         if (!mapToState || mapToState.constructor !== Function) {
 
@@ -472,14 +482,26 @@
         };
     }
 
+    const utils = Utilities;
+    const { getState: getState$1 } = StateHelpers;
+    const { createStream: createStream$2, getStream: getStream$1 } = StreamHelpers;
+    const connect = Connect;
+
     var index = {
-        connect,
-        getState,
-        createStream: createStream$1,
-        getStream,
-        utils
+        utils,
+        getState: getState$1,
+        createStream: createStream$2,
+        getStream: getStream$1,
+        connect
     };
 
-    return index;
+    exports.connect = connect;
+    exports.createStream = createStream$2;
+    exports.default = index;
+    exports.getState = getState$1;
+    exports.getStream = getStream$1;
+    exports.utils = utils;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
 
 }));

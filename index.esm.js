@@ -88,7 +88,7 @@ const stateHasChanged = (change, current) => {
     }
 };
 
-var utils = /*#__PURE__*/Object.freeze({
+var Utilities = /*#__PURE__*/Object.freeze({
     arrayMatches: arrayMatches,
     stateHasChanged: stateHasChanged
 });
@@ -110,6 +110,11 @@ const setState = (newState) => {
 
     return state;
 };
+
+var StateHelpers = /*#__PURE__*/Object.freeze({
+    getState: getState,
+    setState: setState
+});
 
 /**
  * Cancel token
@@ -384,6 +389,11 @@ const createStream$1 = (reducer, initialState) => {
     return stream;
 };
 
+var StreamHelpers = /*#__PURE__*/Object.freeze({
+    getStream: getStream,
+    createStream: createStream$1
+});
+
 /**
  * Decorator for implement state management on a Riot component.
  * Application state is mapped to Component state, stream updates
@@ -393,7 +403,7 @@ const createStream$1 = (reducer, initialState) => {
  * @param {function} mapToState - Required. Function to reduce application state to relevant app state
  * @param {function|object} mapToComponent - Optional. Map a function or object onto a component.
  */
-function connect (mapToState, mapToComponent) {
+function Connect (mapToState, mapToComponent) {
 
     if (!mapToState || mapToState.constructor !== Function) {
 
@@ -466,12 +476,18 @@ function connect (mapToState, mapToComponent) {
     };
 }
 
+const utils = Utilities;
+const { getState: getState$1 } = StateHelpers;
+const { createStream: createStream$2, getStream: getStream$1 } = StreamHelpers;
+const connect = Connect;
+
 var index = {
-    connect,
-    getState,
-    createStream: createStream$1,
-    getStream,
-    utils
+    utils,
+    getState: getState$1,
+    createStream: createStream$2,
+    getStream: getStream$1,
+    connect
 };
 
 export default index;
+export { connect, createStream$2 as createStream, getState$1 as getState, getStream$1 as getStream, utils };
