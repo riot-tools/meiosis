@@ -360,8 +360,8 @@
 
     /**
      * Creates a global state stream
-     * @param {function} reducer Reducer that transforms incoming state payloads
-     * @param {any} initialState Initial app state
+     * @param {function} reducer Reducer that transforms incoming payloads into global state
+     * @param {any} initialState Initial app state. Can be set to anything except `null` or `undefined`.
      */
     const createStream$1 = (reducer, initialState) => {
 
@@ -391,13 +391,13 @@
     };
 
     /**
-     * Decorator for implement state management on a Riot componenet.
+     * Decorator for implement state management on a Riot component.
      * Application state is mapped to Component state, stream updates
      * generate component updates only when there are changes to the
      * relevant state, and component cleans up and  stops listening
      * to state changes onBeforeUnmount.
-     * @param {function} mapToState - Required function to reduce application state to relevant app state
-     * @param {function|object} mapToComponent - Optionally, map a function or object onto a component
+     * @param {function} mapToState - Required. Function to reduce application state to relevant app state
+     * @param {function|object} mapToComponent - Optional. Map a function or object onto a component.
      */
     function connect (mapToState, mapToComponent) {
 

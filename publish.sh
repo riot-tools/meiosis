@@ -4,22 +4,23 @@ npm run test
 
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
-echo "Version update? (major, minor, patch)"
-
-read versionCommand
-
-echo "npm version $versionCommand"
-
-rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-
 echo "Commit message: "
 
 read commitMessage
 
-echo "git commit -am $commitMessage"
+git commit -am "$commitMessage"
 
-# rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
-echo "git push origin master"
+echo "Version update? (major, minor, patch)"
 
-echo "npm publish"
+read versionCommand
+
+npm version $versionCommand
+
+rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+
+
+git push origin master
+
+npm publish
