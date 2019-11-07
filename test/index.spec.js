@@ -5,7 +5,7 @@ import {
     connect,
     getState,
     createStream,
-    getStream,
+    getStream
 } from '..';
 
 const clone = (obj) => {
