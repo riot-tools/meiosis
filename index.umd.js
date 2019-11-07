@@ -1,7 +1,7 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
-    (global = global || self, global['riot-meiosis'] = factory());
+    (global = global || self, global.RiotMeiosis = factory());
 }(this, function () { 'use strict';
 
     const arrayMatches = (arr1, arr2) => {
@@ -471,8 +471,6 @@
             return component;
         };
     }
-
-    console.log('createStream', createStream$1);
 
     var index = {
         connect,

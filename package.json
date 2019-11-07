@@ -2,9 +2,9 @@
   "name": "riot-meiosis",
   "version": "1.0.1",
   "description": "Meiosis state manager for Riot using Erre",
-  "main": "riot-meiosis.js",
-  "module": "index.js",
-  "js:next": "index.js",
+  "main": "index.umd.js",
+  "module": "index.esm.js",
+  "js:next": "index.esm.js",
   "scripts": {
     "test": "npm run build && mocha -r @babel/register -r @babel/polyfill --recursive",
     "watch": "nodemon -w lib -w test -x 'npm run test'",

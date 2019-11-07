@@ -1,7 +1,7 @@
 import resolve from 'rollup-plugin-node-resolve'
 
 export default {
-  input: 'index.js',
+  input: 'lib/index.js',
   plugins: [
     resolve({
       jsnext: true
@@ -9,9 +9,14 @@ export default {
   ],
   output: [
     {
-      name: 'riot-meiosis',
-      file: 'riot-meiosis.js',
+      name: 'RiotMeiosis',
+      file: 'index.umd.js',
       format: 'umd'
+    },
+    {
+      name: 'RiotMeiosis',
+      file: 'index.esm.js',
+      format: 'esm'
     }
   ]
 };
