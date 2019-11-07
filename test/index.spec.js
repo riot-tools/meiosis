@@ -141,7 +141,7 @@ describe('Riot Meiosis', function () {
         };
 
         // pretend to mount
-        connected.onBeforeMount();
+        connected.onBeforeMount({}, connected.state);
 
         expect(ranOriginal).to.be.true;
         expect(connected.state).to.have.keys('hasCandy', 'something');
@@ -260,4 +260,61 @@ describe('Riot Meiosis', function () {
             }
         });
     });
+
+    it('should map object to component', function () {
+
+        const component = clone(stub.component);
+
+        const actions = {
+            pepe: () => 'billete',
+            fulanito: () => 'perez'
+        };
+
+        const connected = connect(stub.mapToState, actions)(component);
+
+        stub.wasMounted = () => {};
+
+        // pretend to mount
+        connected.onBeforeMount({}, connected.state);
+
+        expect(connected).to.include.keys('pepe', 'fulanito');
+        expect(connected.pepe()).to.equal(actions.pepe());
+        expect(connected.fulanito()).to.equal(actions.fulanito());
+    });
+
+    it('should map function to component', function () {
+
+        const component = clone(stub.component);
+
+        let passedState = false;
+        let passedProps = false;
+
+        const actions = (props, state) => {
+
+            passedState = !!props;
+            passedProps = !!state;
+
+            return {
+
+                pepe: () => 'billete',
+                fulanito: () => 'perez'
+            };
+        };
+
+        const connected = connect(stub.mapToState, actions)(component);
+
+        stub.wasMounted = () => {};
+
+        // pretend to mount
+        connected.onBeforeMount({}, connected.state);
+
+        expect(connected).to.include.keys('pepe', 'fulanito');
+
+        expect(passedState).to.be.true;
+        expect(passedProps).to.be.true;
+
+        expect(connected.pepe()).to.equal('billete');
+        expect(connected.fulanito()).to.equal('perez');
+    });
+
 });

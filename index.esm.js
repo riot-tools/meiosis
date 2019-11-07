@@ -424,15 +424,36 @@ function Connect (mapToState, mapToComponent) {
      */
     return function (component) {
 
+        let update;
+
         // store the original onUnmounted call if it exists
-        const { onBeforeMount, onBeforeUnmount, state } = component;
+        const { onBeforeMount, onBeforeUnmount } = component;
 
         // Merge global state to local state.
         // Global state supersedes local state.
-        component.onBeforeMount = function (...args) {
+        component.onBeforeMount = function (props, state) {
 
-            onBeforeMount(...args);
+            update = this.update.bind(this);
+
+            if (onBeforeMount) {
+                onBeforeMount.call(props, state);
+            }
+
             this.state = mapToState(getState(), state);
+
+            if (mapToComponent) {
+
+                if (typeof mapToComponent === 'function') {
+                    mapToComponent = mapToComponent(props, state);
+                }
+
+                if (typeof mapToComponent === 'object') {
+                    Object.assign(component, mapToComponent);
+                }
+                else {
+                    throw TypeError('mapToComponent must return an object');
+                }
+            }
         };
 
         // Should only call update if state has changed
@@ -441,36 +462,21 @@ function Connect (mapToState, mapToComponent) {
             const { state } = component;
             const change = mapToState(newState, state);
 
-            if (stateHasChanged(change, state)) component.update(change);
+            if (stateHasChanged(change, state)) update(change);
         };
 
         // wrap the onUnmounted callback to end the cloned stream
         // when the component will be unmounted
         component.onBeforeUnmount = function (...args) {
 
-            onBeforeUnmount(...args);
+            if (onBeforeMount) {
+                onBeforeUnmount.call(this, ...args);
+            }
             stream.off.value(listener);
         };
 
         // When state is updated, update component state.
         stream.on.value(listener);
-
-        if (mapToComponent) {
-
-            if (typeof mapToComponent === 'function') {
-
-                mapToComponent = mapToComponent();
-            }
-
-            if (typeof mapToComponent === 'object') {
-
-                Object.assign(component, mapToComponent);
-            }
-            else {
-
-                throw TypeError('mapToComponent must return an object');
-            }
-        }
 
         return component;
     };

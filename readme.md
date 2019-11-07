@@ -92,7 +92,7 @@ In your `.riot` files:
         // Optional mapping of functions or objects to component
         const mapToComponent = myActions;
         // OR
-        const mapToComponent = () => myActions;
+        const mapToComponent = (ownProps, ownState) => myActions;
 
         const component = {
 
@@ -139,8 +139,10 @@ Both `reducer()` and `initialState` are required. You can set `initialState` to 
 
 Decorator for implement state management on a Riot component. Application state is mapped to Component state, stream updates generate component updates only when there are changes to the relevant state, and component cleans up and  stops listening to state changes `onBeforeUnmount`.
 
-* `mapToState` *function, required* - Function to reduce application state to relevant app state
-* `mapToComponent` *function / object* - Optionally, map a function or object onto a component
+* `mapToState(appState, componentState)` *function, required* - Function to reduce application state to relevant app state
+* `mapToComponent`: Optional
+    - *object* - Map an object to component
+    - *function* - `(ownProps, ownState) => ({})` - Map a function's return value to component. Receives component props and state. Should return an object.
 
 #### Returns
 
