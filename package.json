@@ -1,6 +1,6 @@
 {
   "name": "riot-meiosis",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Meiosis state manager for Riot using Erre",
   "main": "index.umd.js",
   "module": "index.esm.js",
