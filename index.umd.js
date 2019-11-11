@@ -432,6 +432,15 @@
 
             let update;
 
+            // Should only call update if state has changed
+            const listener = (newState) => {
+
+                const { state } = component;
+                const change = mapToState(newState, state);
+
+                if (stateHasChanged(change, state)) update(change);
+            };
+
             // store the original onUnmounted call if it exists
             const { onBeforeMount, onBeforeUnmount } = component;
 
@@ -440,6 +449,10 @@
             component.onBeforeMount = function (props, state) {
 
                 update = this.update.bind(this);
+
+                // When state is updated, update component state.
+                stream.on.value(listener);
+
 
                 if (onBeforeMount) {
                     onBeforeMount.call(props, state);
@@ -462,15 +475,6 @@
                 }
             };
 
-            // Should only call update if state has changed
-            const listener = (newState) => {
-
-                const { state } = component;
-                const change = mapToState(newState, state);
-
-                if (stateHasChanged(change, state)) update(change);
-            };
-
             // wrap the onUnmounted callback to end the cloned stream
             // when the component will be unmounted
             component.onBeforeUnmount = function (...args) {
@@ -480,9 +484,6 @@
                 }
                 stream.off.value(listener);
             };
-
-            // When state is updated, update component state.
-            stream.on.value(listener);
 
             return component;
         };
