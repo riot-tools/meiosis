@@ -144,11 +144,13 @@ Decorator for implement state management on a Riot component. Application state 
     - *object* - Map an object to component
     - *function* - `(ownProps, ownState) => ({})` - Map a function's return value to component. Receives component props and state. Should return an object.
 
-#### Returns
+**Returns**
 
 Function to pass your component into. The result value is used to `export default` inside your Riot component and have a component that is conditionally connected to global state.
 
-### `getState()`
+
+
+#### `getState()`
 
 Returns the application state.
 
@@ -162,3 +164,62 @@ Utilities used by the library.
 
 * `utils.arrayMatches(arr1, arr2)` - Checks to see if 2 arrays match
 * `stateHasChanged(newState, oldState)` - Checks to see if state has changed by recursively matching primitives
+
+
+## RM Dev Tools
+
+Riot Meiosis comes with a dev tool to be able to look into your state and manipulate it directly. Here's how it works:
+
+In your `app.js`
+```js
+import { register, component } from 'riot';
+import { getStream, connect, RMDevTools } from 'riot-meiosis';
+
+// You must pass it connect and getStream in order
+// for it to return a mountable riot component
+register('rmdevtools', RMDevTools({ getStream, connect }))
+```
+
+In your `app.riot` or `index.html`
+```html
+<html>
+    ...
+    <footer></footer>
+
+    <rmdevtools></rmdevtools>
+</html>
+
+```
+
+Examples of what it should look like:
+
+### Closed
+
+Devtools creates a floating icon on the page to toggle state
+
+![](screenshots/closed.png)
+
+### Opened
+
+By default, you can only view the state unless you choose to edit it
+
+![](screenshots/open.png)
+
+### Editing
+
+By default, the editor will display as tree view.
+
+![](screenshots/editing.png)
+
+### Text View
+
+You can also swap out your entire state tree by pasting in a JSON string.
+
+![](screenshots/textview.png)
+
+### After state was manipulated
+
+After applying changes, a push will be sent to your stream and all connected components affected by the changes will be updated.
+
+![](screenshots/statechanged.png)
+

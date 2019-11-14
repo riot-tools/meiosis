@@ -6,9 +6,12 @@
   "module": "index.esm.js",
   "js:next": "index.esm.js",
   "scripts": {
-    "test": "npm run build && mocha -r @babel/register -r @babel/polyfill --recursive",
-    "watch": "nodemon -w lib -w test -x 'npm run test'",
-    "build": "rollup -c"
+    "test": "mocha -r @babel/register -r @babel/polyfill --recursive",
+    "watch": "nodemon -w lib -w test --ignore lib/rmdevtools.js -x 'npm run prepare && npm run test'",
+    "build": "rollup -c",
+    "devtools:transpile": "riot ./components/rmdevtools.riot -f esm",
+    "devtools:generate": "node ./scripts/generateDevtools",
+    "prepare": "npm run devtools:transpile; npm run devtools:generate; npm run build"
   },
   "repository": {
     "type": "git",
@@ -42,6 +45,7 @@
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.5.4",
     "@babel/register": "^7.4.4",
+    "@riotjs/cli": "^4.0.2",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
     "rollup": "^1.16.7",

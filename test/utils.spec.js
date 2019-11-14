@@ -59,6 +59,122 @@ describe('Utility functions', function () {
         expect(changed).to.be.true;
     });
 
+    it('should have changes no matter the primitive', function () {
+
+        const state1 = { x: 1 };
+
+        [
+            'string',
+            true,
+            0,
+            null,
+            undefined,
+            Symbol('lol')
+        ].forEach(x => {
+
+            const changed = stateHasChanged(state1, { x });
+            expect(changed).to.be.true;
+        })
+    });
+
+    it('should have changes on complex structures', function () {
+
+        const state1 = {
+            isOpen: true,
+            editingMode: false,
+            editorOpts: {
+                mode: "view",
+                mainMenuBar: false
+            },
+            app: {
+                authenticated: false,
+                isMobile: false,
+                loading: true
+            },
+            beep: [{
+                bop: true,
+                beer: [
+                    { german: ['becks']}
+                ]
+            }]
+        };
+
+        const state2 = {
+            isOpen: true,
+            editingMode: false,
+            editorOpts: {
+                mode: "view",
+                mainMenuBar: false
+            },
+            app: {
+                authenticated: false,
+                isMobile: false,
+                loading: true
+            },
+            beep: [{
+                bop: true,
+                beer: [
+                    { german: ['pauli girl']}
+                ]
+            }]
+        };
+
+        const changed = stateHasChanged(state1, state2);
+        expect(changed).to.be.true;
+
+    });
+
+    it('should have changes on very deep nested', function () {
+
+        const state1 = {
+            isOpen: true,
+            nested: {
+                nested: {
+                    nested: {
+                        super: 'duper'
+                    }
+                }
+            },
+            more: {
+                more: {
+                    more: {
+                        more: {
+                            more: {
+                                super: 'duper'
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const state2 = {
+            isOpen: true,
+            nested: {
+                nested: {
+                    nested: {
+                        super: 'duper'
+                    }
+                }
+            },
+            more: {
+                more: {
+                    more: {
+                        more: {
+                            more: {
+                                super: 'duperz'
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const changed = stateHasChanged(state1, state2);
+        expect(changed).to.be.true;
+
+    });
+
     it('should have changes if value is not primitive and prototype changes', function () {
 
         const state1 = { x: 1, y: {} };

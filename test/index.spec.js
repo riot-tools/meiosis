@@ -45,7 +45,22 @@ const stub = {
         state: { something: 'intheway' },
         onBeforeMount: () => stub.wasMounted(),
         onBeforeUnmount: () => stub.wasUnmounted(),
-        update: (val) => stub.wasUpdated(val)
+        update: (val) => {
+
+            const retrn = stub.wasUpdated(val);
+
+            if (stub.connected) {
+
+                const { mapToState, connected } = stub;
+                const { onUpdated, state } = connected;
+
+                // Make connect aware of state changes by faking
+                // component lifecycle
+                onUpdated({}, mapToState(getState(), state));
+            }
+
+            return retrn;
+        }
     },
     mapToState: (appState, state) => ({
         ...state,
