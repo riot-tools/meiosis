@@ -2,16 +2,14 @@
 
 Meiosis state manager for Riot using Erre. [Learn more about meiosis](http://RiotMeiosis.js.org).
 
-
 * [Usage](#usage)
 * [API](#api)
     * [createStream(reducer, initialState)](#createstreamreducer-initialstate)
     * [connect(mapToState, mapToComponent)(MyComponent)](#connectmaptostate-maptocomponentmycomponent)
-    * [Returns](#returns)
     * [getState()](#getstate)
     * [getStream()](#getstream)
     * [utils](#utils)
-
+* [RM Dev Tools](#rm-dev-tools)
 
 Key things to note:
 - Implements a stream to update state
@@ -150,13 +148,15 @@ Function to pass your component into. The result value is used to `export defaul
 
 
 
-#### `getState()`
+### `getState()`
 
 Returns the application state.
+
 
 ### `getStream()`
 
 Returns the application state stream.
+
 
 ### utils
 
