@@ -23,7 +23,6 @@
         String,
         Number,
         Boolean,
-        BigInt,
         Symbol,
         null,
         undefined
