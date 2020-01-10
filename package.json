@@ -12,7 +12,7 @@
     "devtools:transpile": "riot ./components/rmdevtools.riot -f esm",
     "devtools:generate": "node ./scripts/generateDevtools",
     "prepare": "npm run devtools:transpile; npm run devtools:generate; npm run build",
-    "publish": "./scripts/publish.sh"
+    "deploy": "./scripts/publish.sh"
   },
   "repository": {
     "type": "git",
