@@ -11,7 +11,8 @@
     "build": "rollup -c",
     "devtools:transpile": "riot ./components/rmdevtools.riot -f esm",
     "devtools:generate": "node ./scripts/generateDevtools",
-    "prepare": "npm run devtools:transpile; npm run devtools:generate; npm run build"
+    "prepare": "npm run devtools:transpile; npm run devtools:generate; npm run build",
+    "publish": "./scripts/publish.sh"
   },
   "repository": {
     "type": "git",

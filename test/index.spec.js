@@ -164,6 +164,7 @@ describe('Riot Meiosis', function () {
         stub.connected = connected;
     });
 
+
     it('should update component when push to stream', function () {
 
         const q = defer();
@@ -332,4 +333,26 @@ describe('Riot Meiosis', function () {
         expect(connected.fulanito()).to.equal('perez');
     });
 
+    it('should map state to component when declared in onBeforeMount', function () {
+
+        const component = clone(stub.component);
+
+        const { onBeforeMount } = component;
+
+        component.state = {};
+
+        component.onBeforeMount = (props, state) => {
+
+            component.state = { definedLater: true };
+            onBeforeMount.bind(component)(props, state);
+        }
+
+        const connected = connect(stub.mapToState)(component);
+
+        expect(connected.state).to.not.have.keys('definedLater');
+
+        // pretend to mount
+        connected.onBeforeMount({}, connected.state);
+        expect(connected.state).to.include.keys('definedLater');
+    });
 });

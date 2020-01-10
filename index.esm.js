@@ -438,7 +438,7 @@ function Connect (mapToState, mapToComponent) {
 
         // Merge global state to local state.
         // Global state supersedes local state.
-        component.onBeforeMount = function (props, state) {
+        component.onBeforeMount = function (props, state = {}) {
 
             update = (...args) => this.update.apply(this, args);
 
@@ -449,6 +449,8 @@ function Connect (mapToState, mapToComponent) {
             if (onBeforeMount) {
                 onBeforeMount.apply(this, [props, state]);
             }
+
+            state = this.state;
 
             this.state = mapToState(getState(), state);
             componentState = this.state;
