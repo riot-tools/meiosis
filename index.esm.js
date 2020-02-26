@@ -424,12 +424,13 @@ function Connect (mapToState, mapToComponent) {
 
         let update;
         let componentState;
+        let componentProps;
         const stream = getStream();
 
         // Should only call update if state has changed
         const listener = (newState) => {
 
-            const change = mapToState(newState, componentState);
+            const change = mapToState(newState, componentState, componentProps);
             if (stateHasChanged(change, componentState)) update(change);
         };
 
@@ -450,10 +451,12 @@ function Connect (mapToState, mapToComponent) {
                 onBeforeMount.apply(this, [props, state]);
             }
 
-            state = this.state;
+            state = { ...state, ...this.state };
 
-            this.state = mapToState(getState(), state);
+            this.state = mapToState(getState(), state, props);
             componentState = this.state;
+            componentProps = props;
+
 
             if (mapToComponent) {
 

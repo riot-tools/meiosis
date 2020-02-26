@@ -41,6 +41,7 @@ const stub = {
             hasCandy: true
         }
     },
+    props: { prop: true },
     component: {
         state: { something: 'intheway' },
         onBeforeMount: () => stub.wasMounted(),
@@ -51,20 +52,21 @@ const stub = {
 
             if (stub.connected) {
 
-                const { mapToState, connected } = stub;
+                const { mapToState, connected, props } = stub;
                 const { onUpdated, state } = connected;
 
                 // Make connect aware of state changes by faking
                 // component lifecycle
-                onUpdated({}, mapToState(getState(), state));
+                onUpdated({}, mapToState(getState(), state, props));
             }
 
             return retrn;
         }
     },
-    mapToState: (appState, state) => ({
+    mapToState: (appState, state, props) => ({
         ...state,
-        ...appState.nestedState
+        ...appState.nestedState,
+        props
     }),
     mapToComponentFn: () => ({
         functionWorked: true
@@ -156,10 +158,10 @@ describe('Riot Meiosis', function () {
         };
 
         // pretend to mount
-        connected.onBeforeMount({}, connected.state);
+        connected.onBeforeMount(stub.props, connected.state);
 
         expect(ranOriginal).to.be.true;
-        expect(connected.state).to.have.keys('hasCandy', 'something');
+        expect(connected.state).to.have.keys('hasCandy', 'something', 'props');
 
         stub.connected = connected;
     });
@@ -211,7 +213,7 @@ describe('Riot Meiosis', function () {
 
         let update = false;
 
-        stub.wasUpdated = () => {
+        stub.wasUpdated = (val) => {
             update = true;
         };
 
@@ -232,8 +234,7 @@ describe('Riot Meiosis', function () {
 
         stream.push({
             nestedState: {
-                ...stub.state.nestedState,
-                shemoves: true
+                ...stub.state.nestedState
             }
         });
 
@@ -291,7 +292,7 @@ describe('Riot Meiosis', function () {
         stub.wasMounted = () => {};
 
         // pretend to mount
-        connected.onBeforeMount({}, connected.state);
+        connected.onBeforeMount(stub.props, connected.state);
 
         expect(connected).to.include.keys('pepe', 'fulanito');
         expect(connected.pepe()).to.equal(actions.pepe());
@@ -322,7 +323,7 @@ describe('Riot Meiosis', function () {
         stub.wasMounted = () => {};
 
         // pretend to mount
-        connected.onBeforeMount({}, connected.state);
+        connected.onBeforeMount(stub.props, connected.state);
 
         expect(connected).to.include.keys('pepe', 'fulanito');
 

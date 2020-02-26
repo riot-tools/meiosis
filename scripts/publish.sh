@@ -5,23 +5,13 @@ npm run test
 
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
-echo "Commit message: "
-
-read commitMessage
-
-git add .
-git commit -am "$commitMessage"
+npm run commit
 
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
-echo "Version update? (major, minor, patch)"
-
-read versionCommand
-
-npm version $versionCommand
+npm run release
 
 rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
-
 
 git push origin master
 

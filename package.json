@@ -12,7 +12,9 @@
     "devtools:transpile": "riot ./components/rmdevtools.riot -f esm",
     "devtools:generate": "node ./scripts/generateDevtools",
     "prepare": "npm run devtools:transpile; npm run devtools:generate; npm run build",
-    "deploy": "./scripts/publish.sh"
+    "deploy": "./scripts/publish.sh",
+    "commit": "git-cz",
+    "release": "standard-version"
   },
   "repository": {
     "type": "git",
@@ -48,8 +50,15 @@
     "@babel/register": "^7.4.4",
     "@riotjs/cli": "^4.0.2",
     "chai": "^4.2.0",
+    "cz-conventional-changelog": "^3.1.0",
     "mocha": "^6.1.4",
     "rollup": "^1.16.7",
-    "rollup-plugin-node-resolve": "^5.2.0"
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "standard-version": "^7.1.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

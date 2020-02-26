@@ -82,8 +82,8 @@ In your `.riot` files:
         import { connect } from 'riot-meiosis';
         import myActions from './actions';
 
-        const mapToState = (appState, componentState) => ({
-            ...componentState,
+        const mapToState = (appState, ownState, ownProps) => ({
+            ...ownState,
             ...appState.nested
         });
 
@@ -137,7 +137,7 @@ Both `reducer()` and `initialState` are required. You can set `initialState` to 
 
 Decorator for implement state management on a Riot component. Application state is mapped to Component state, stream updates generate component updates only when there are changes to the relevant state, and component cleans up and  stops listening to state changes `onBeforeUnmount`.
 
-* `mapToState(appState, componentState)` *function, required* - Function to reduce application state to relevant app state
+* `mapToState(appState, ownState, ownProps)` *function, required* - Function to reduce application state to relevant app state
 * `mapToComponent`: Optional
     - *object* - Map an object to component
     - *function* - `(ownProps, ownState) => ({})` - Map a function's return value to component. Receives component props and state. Should return an object.
