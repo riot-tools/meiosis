@@ -22,6 +22,11 @@ const primitives = [
     undefined
 ];
 
+const noConstructor = [
+    null,
+    undefined
+];
+
 const stateHasChanged = (change, current) => {
 
     const currentKeys = Object.keys(current);
@@ -61,6 +66,12 @@ const stateHasChanged = (change, current) => {
             if (primitives.includes(value) || primitives.includes(value.constructor)) {
 
                 if (value !== compare) return true;
+            }
+
+            // If value is primitive, has no change, but does not have a constructor
+            if (noConstructor.includes(value)) {
+
+                return false;
             }
 
             // If value constructor changes

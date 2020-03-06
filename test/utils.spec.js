@@ -212,4 +212,13 @@ describe('Utility functions', function () {
 
         expect(changed).to.be.true;
     });
+
+    it('should not throw if there is no change and values are undefined or null', function () {
+
+        const hasNull = { x: null };
+        const hasUndefined = { x: undefined };
+
+        expect(() => stateHasChanged(hasNull, { ...hasNull })).to.not.throw();
+        expect(() => stateHasChanged(hasUndefined, { ...hasUndefined })).to.not.throw();
+    });
 });
