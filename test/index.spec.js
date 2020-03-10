@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import Erre from 'erre';
 
 import {
     connect,
@@ -355,5 +354,21 @@ describe('Riot Meiosis', function () {
         // pretend to mount
         connected.onBeforeMount({}, connected.state);
         expect(connected.state).to.include.keys('definedLater');
+    });
+
+    it('should not remove stream listener if it has not been initiated', function () {
+
+        const component = clone(stub.component);
+
+        const { onBeforeUnmount } = component;
+
+        component.state = {};
+
+        component.onBeforeUnmount = (props, state) => {
+
+            onBeforeUnmount.bind(component)(props, state);
+        }
+
+        expect(() => component.onBeforeUnmount()).to.not.throw();
     });
 });
