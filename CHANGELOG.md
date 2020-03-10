@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.6](https://github.com/damusix/riot-meiosis/compare/v1.1.5...v1.1.6) (2020-03-10)
+
+
+### Bug Fixes
+
+* **connect:** bad if check onBeforeUnmount ([878d67b](https://github.com/damusix/riot-meiosis/commit/878d67b214b8ef7826119db7620c9b51262c9e4f))
+
 ### [1.1.5](https://github.com/damusix/riot-meiosis/compare/v1.1.3...v1.1.5) (2020-03-06)
 
 
