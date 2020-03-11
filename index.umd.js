@@ -443,9 +443,9 @@
                 update: null,
                 componentState: null,
                 componentProps: null,
-                onBeforeMount: null,
-                onBeforeUnmount: null,
-                onUpdated: null
+                onBeforeMount: component.onBeforeMount,
+                onBeforeUnmount: component.onBeforeUnmount,
+                onUpdated: component.onUpdated
             };
 
             const stream = getStream();
@@ -458,12 +458,6 @@
                 const change = mapToState(newState, componentState, componentProps);
                 if (stateHasChanged(change, componentState)) store.update(change);
             };
-
-            // store the original call if exists
-            store.onBeforeMount = component.onBeforeMount;
-            store.onBeforeUnmount = component.onBeforeUnmount;
-            store.onUpdated = component.onUpdated;
-
 
             // Merge global state to local state.
             // Global state supersedes local state.
@@ -480,6 +474,7 @@
                 }
 
                 state = { ...state, ...this.state };
+
                 this.state = mapToState(getState(), state, props);
                 store.componentState = this.state;
                 store.componentProps = props;
@@ -523,7 +518,14 @@
                 }
 
                 if (store.listener) {
-                    stream.off.value(store.listener);
+                    try {
+                        stream.off.value(store.listener);
+                    }
+                    catch (e) {
+                        if (!/Couldn\'t remove handler passed by reference/.test(e.message)) {
+                            throw e;
+                        }
+                    }
                 }
             };
 
