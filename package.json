@@ -57,7 +57,7 @@
     "mocha": "^6.1.4",
     "rollup": "^1.16.7",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "standard-version": "^7.1.0"
+    "standard-version": "^8.0.1"
   },
   "config": {
     "commitizen": {
