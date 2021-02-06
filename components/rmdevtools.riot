@@ -35,8 +35,8 @@
         /** import { connect, getStream } from 'riot-meiosis'; */
 
         const urls = {
-            js: "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/7.0.4/jsoneditor.min.js",
-            css: "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/7.0.4/jsoneditor.min.css",
+            js: "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.1.9/jsoneditor.min.js",
+            css: "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.1.9/jsoneditor.min.css",
             fontawesome: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
         };
 
@@ -99,6 +99,14 @@
             },
             onMounted(_, state) {
                 this.root.classList.add('closed');
+
+                window.addEventListener('keydown', ({ keyCode }) => {
+
+                    if (keyCode === 27) {
+
+                        this.update({ isOpen: false });
+                    }
+                })
 
                 this.loadScripts(() => {
 

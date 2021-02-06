@@ -1,0 +1,2 @@
+- [ ] Add tests for fringe cases (array changes, array sorting, etc)
+- [ ] Resolve bug where rmdevtools doesn't update view until it is closed / reopened

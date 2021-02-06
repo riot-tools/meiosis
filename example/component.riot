@@ -1,0 +1,46 @@
+<samplecomponent>
+
+    <h1 if={ !state.loading }>Sample Component</h1>
+    <h1 if={ state.loading }>Loading...</h1>
+
+    Outside was clicked { state.buttonclicked } times.
+
+    <br />
+    <br />
+
+    <button onclick={ () => setLoading(!state.loading) }>Click me to toggle independent component loading state</button>
+
+    <br />
+    <hr />
+
+    <h3>Items in state:</h3>
+    <li each={ (item, i) in state.items }>
+        <input type="checkbox" checked={ item.checked } onchange={ (e) => { e.preventDefault(); setChecked(i, !item.checked) } }>
+        { item.text }
+    </li>
+
+    <p>Edit the items in RMDevTools so you can see how it works!</p>
+
+    <script>
+
+        const mapToState = (appState, ownState) => ({
+            ...ownState,
+            ...appState,
+        });
+
+        const component = {
+            state: { loading: false },
+            setLoading (loading) { this.update({ loading }) },
+            setChecked(i, checked) {
+
+                const { items } = RiotMeiosis.getState();
+
+                items[i].checked = checked;
+
+                RiotMeiosis.getStream().push({ items });
+            }
+        }
+
+        export default RiotMeiosis.connect(mapToState)(component);
+    </script>
+</samplecomponent>

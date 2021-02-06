@@ -1,9 +1,27 @@
-build:
-	@ npm run rollup
+rollup:
+	@ yarn run rollup -c
 
-test:
-	@ npm run lint
-	@ npm run test
+devtools-transpile:
+	@ yarn run riot ./components/rmdevtools.riot -f esm
 
-deploy:
-	@ ./scripts/publish.sh
+devtools-generate:
+	@ node ./scripts/generateDevtools
+
+build-files:
+	@ make devtools-transpile
+	@ make devtools-generate
+	@ make rollup
+
+run-tests:
+	@ yarn run mocha -r @babel/register -r @babel/polyfill --recursive
+
+watch:
+	@ nodemon -w lib -w test --ignore lib/rmdevtools.js -x 'make build-files && make run-tests'
+
+preview:
+	@ make build-files
+	@ npx http-server . -o
+
+publish:
+	@ make build-files
+	@ yarn run semantic-release

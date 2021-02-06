@@ -2,19 +2,18 @@
   "name": "riot-meiosis",
   "version": "1.1.8",
   "description": "Meiosis state manager for Riot using Erre",
-  "main": "index.umd.js",
-  "module": "index.esm.js",
-  "js:next": "index.esm.js",
+  "main": "dist/umd.js",
+  "module": "dist/cjs.js",
+  "jsnext:main": "dist/es.js",
+  "files": [
+    "dist/umd.js",
+    "dist/cjs.js",
+    "dist/es.js",
+    "readme.md",
+    "screenshots"
+  ],
   "scripts": {
-    "test": "mocha -r @babel/register -r @babel/polyfill --recursive",
-    "watch": "nodemon -w lib -w test --ignore lib/rmdevtools.js -x 'npm run prepare && npm run test'",
-    "build": "rollup -c",
-    "devtools:transpile": "riot ./components/rmdevtools.riot -f esm",
-    "devtools:generate": "node ./scripts/generateDevtools",
-    "prepare": "npm run devtools:transpile; npm run devtools:generate; npm run build",
-    "deploy": "./scripts/publish.sh",
-    "commit": "git-cz",
-    "release": "standard-version"
+    "start": "make watch"
   },
   "repository": {
     "type": "git",
@@ -40,29 +39,26 @@
       "@babel/preset-env"
     ]
   },
-  "dependencies": {
-    "erre": "^2.2.0"
-  },
   "devDependencies": {
-    "@babel/core": "^7.5.4",
-    "@babel/polyfill": "^7.4.4",
-    "@babel/preset-env": "^7.5.4",
-    "@babel/register": "^7.4.4",
-    "@commitlint/cli": "^8.3.5",
-    "@commitlint/config-conventional": "^8.3.4",
-    "@riotjs/cli": "^4.0.2",
-    "chai": "^4.2.0",
-    "cz-conventional-changelog": "^3.1.0",
-    "husky": "^4.2.3",
+    "@babel/core": "^7.12.10",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/register": "^7.12.13",
+    "@commitlint/cli": "^11",
+    "@commitlint/config-conventional": "^11",
+    "@riotjs/cli": "^5",
+    "@rollup/plugin-commonjs": "^17.1.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^11.1.1",
+    "chai": "^4",
+    "cz-conventional-changelog": "^3",
+    "deep-diff": "^1.0.2",
+    "erre": "^2.2.0",
+    "husky": "^4",
     "mocha": "^6.1.4",
-    "rollup": "^1.16.7",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "standard-version": "^7.1.0"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
+    "rollup": "^2.38.2",
+    "rollup-plugin-babel": "^4.4.0",
+    "semantic-release": "^17"
   },
   "commitlint": {
     "extends": [
@@ -73,5 +69,23 @@
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
+  },
+  "release": {
+    "ci": false,
+    "branches": [
+      "+([0-9])?(.{+([0-9]),x}).x",
+      "master",
+      {
+        "name": "next",
+        "prerelease": true
+      }
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/changelog",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ]
   }
 }
