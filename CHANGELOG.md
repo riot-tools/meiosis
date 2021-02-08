@@ -5,6 +5,13 @@
 
 * version bump ([556c160](https://github.com/damusix/riot-meiosis/commit/556c160083a573b7b519bd63447795e13b6ce7e7))
 
+# [1.2.0](https://github.com/damusix/riot-meiosis/compare/v1.1.8...v1.2.0) (2021-02-08)
+
+
+### Features
+
+* version bump ([556c160](https://github.com/damusix/riot-meiosis/commit/556c160083a573b7b519bd63447795e13b6ce7e7))
+
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
