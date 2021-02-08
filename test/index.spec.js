@@ -104,7 +104,7 @@ describe('Riot Meiosis', function () {
 
     it('should get the current state', function () {
 
-        expect(getState()).to.eq(stub.state);
+        expect(getState()).to.eql(stub.state);
     });
 
     it('should get the current stream', function () {
