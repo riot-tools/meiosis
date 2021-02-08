@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/damusix/riot-meiosis.git"
+    "url": "git@github.com:damusix/riot-meiosis.git"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
