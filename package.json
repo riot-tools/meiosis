@@ -19,6 +19,9 @@
     "type": "git",
     "url": "git+https://github.com/damusix/riot-meiosis.git"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "keywords": [
     "riot",
     "meiosis",
@@ -57,9 +60,11 @@
     "deep-diff": "^1.0.2",
     "erre": "^2.2.0",
     "husky": "^4",
+    "lodash.clonedeep": "^4.5.0",
     "mocha": "^6.1.4",
     "rollup": "^2.38.2",
     "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-terser": "^7.0.2",
     "semantic-release": "^17"
   },
   "commitlint": {

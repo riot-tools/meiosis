@@ -1,8 +1,16 @@
-const commonjs = require('@rollup/plugin-commonjs')
-const json = require('@rollup/plugin-json')
-const {nodeResolve} = require('@rollup/plugin-node-resolve')
+const Commonjs = require('@rollup/plugin-commonjs')
+const Json = require('@rollup/plugin-json')
+const { nodeResolve } = require('@rollup/plugin-node-resolve')
+
 const babel = require('rollup-plugin-babel')
+const { terser } = require('rollup-plugin-terser');
+
+
+
 const emptyFile = 'export default undefined'
+
+
+
 
 // ignore builtin requires
 function ignore() {
@@ -21,11 +29,12 @@ function ignore() {
 const plugins = [
     ignore(),
     nodeResolve(),
-    commonjs(),
-    json(),
+    Commonjs(),
+    Json(),
     babel({
         ignore: [/[/\\]core-js/, /@babel[/\\]runtime/]
-    })
+    }),
+    terser()
 ];
 
 const output = (format) => ({

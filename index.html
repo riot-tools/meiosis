@@ -10,7 +10,7 @@
 <body>
 
     <samplecomponent></samplecomponent>
-    <rmdevtools></rmdevtools>
+    <rmdevtools debounce="0"></rmdevtools>
 
     <hr />
     <button onclick="clickme()">I am not inside a riot component, but click me!</button>
@@ -31,6 +31,7 @@
             ]
         };
 
+
         const reducer = (newState, oldState) => ({
             ...oldState,
             ...newState
@@ -42,7 +43,7 @@
 
             const { buttonclicked } = RiotMeiosis.getState();
 
-            RiotMeiosis.getStream().push({ buttonclicked: buttonclicked+1 })
+            RiotMeiosis.update({ buttonclicked: buttonclicked+1 })
         }
 
         (async function main() {

@@ -2,14 +2,15 @@
 
 Meiosis state manager for Riot using Erre. [Learn more about meiosis](http://RiotMeiosis.js.org).
 
-* [Usage](#usage)
-* [API](#api)
-    * [createStream(reducer, initialState)](#createstreamreducer-initialstate)
-    * [connect(mapToState, mapToComponent)(MyComponent)](#connectmaptostate-maptocomponentmycomponent)
-    * [getState()](#getstate)
-    * [getStream()](#getstream)
-    * [utils](#utils)
-* [RM Dev Tools](#rm-dev-tools)
+- [Riot Meiosis](#riot-meiosis)
+  - [Usage](#usage)
+  - [API](#api)
+    - [`createStream(reducer, initialState)`](#createstreamreducer-initialstate)
+    - [`connect(mapToState, mapToComponent)(MyComponent)`](#connectmaptostate-maptocomponentmycomponent)
+    - [`update(newState)`](#updatenewstate)
+    - [`getState()`](#getstate)
+    - [`getStream()`](#getstream)
+  - [RM Dev Tools](#rm-dev-tools)
 
 Key things to note:
 - Implements a stream to update state
@@ -58,6 +59,7 @@ stream.push({
     isNew: false
 });
 
+// Gets an immutable clone of the current state
 console.log(getState());
 // > {
 //     initial: false,
@@ -116,6 +118,7 @@ In your `.riot` files:
 const {
     createStream,
     connect,
+    update,
     getState,
     getStream,
     utils
@@ -146,6 +149,9 @@ Decorator for implement state management on a Riot component. Application state 
 
 Function to pass your component into. The result value is used to `export default` inside your Riot component and have a component that is conditionally connected to global state.
 
+### `update(newState)`
+
+Pushes an update through your reducer. This is a helper for `getStream().push(newState)`
 
 
 ### `getState()`
@@ -158,17 +164,12 @@ Returns the application state.
 Returns the application state stream.
 
 
-### utils
-
-Utilities used by the library.
-
-* `utils.arrayMatches(arr1, arr2)` - Checks to see if 2 arrays match
-* `stateHasChanged(newState, oldState)` - Checks to see if state has changed by recursively matching primitives
-
-
 ## RM Dev Tools
 
-Riot Meiosis comes with a dev tool to be able to look into your state and manipulate it directly. Here's how it works:
+Riot Meiosis comes with a dev tool to be able to look into your state and manipulate it directly.
+
+![](screenshots/rmdevtools.gif)
+
 
 In your `app.js`
 ```js
@@ -191,35 +192,39 @@ In your `app.riot` or `index.html`
 
 ```
 
-Examples of what it should look like:
 
-### Closed
+If you're using riot in browser compile mode and place this in your `index.html`, you need to register and mount it on your compile callback:
 
-Devtools creates a floating icon on the page to toggle state
+```html
 
-![](screenshots/closed.png)
+<rmdevtools></rmdevtools>
 
-### Opened
+<script>
+    (async function main() {
+        await riot.compile();
 
-By default, you can only view the state unless you choose to edit it
+        riot.mount('samplecomponent');
 
-![](screenshots/open.png)
+        await riot.register(
+            'rmdevtools',
+            RiotMeiosis.RMDevTools(RiotMeiosis)
+        );
 
-### Editing
+        riot.mount('rmdevtools');
 
-By default, the editor will display as tree view.
+        }())
+</script>
 
-![](screenshots/editing.png)
+```
 
-### Text View
-
-You can also swap out your entire state tree by pasting in a JSON string.
-
-![](screenshots/textview.png)
-
-### After state was manipulated
-
-After applying changes, a push will be sent to your stream and all connected components affected by the changes will be updated.
-
-![](screenshots/statechanged.png)
-
+> ### NOTE:
+> `rmdevtools` by default has a 3 second debounce for pushing updates when in autoSave mode.
+> This can be modified by adding `debounce=""` attribute to whatever you want it to be.
+> ``` html
+> <rmdevtools debounce="1000"></rmdevtools>
+> ```
+> Or if you want to disable it complete:
+> ``` html
+> <rmdevtools debounce="0"></rmdevtools>
+> ```
+> This is done to prevent blasting the stream with updates when typing, or doing modifying a large number of items, which can lead to performance issues if you're iterating over large collections or lists.
