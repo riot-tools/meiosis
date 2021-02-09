@@ -1,59 +1,51 @@
-const Commonjs = require('@rollup/plugin-commonjs')
-const Json = require('@rollup/plugin-json')
-const { nodeResolve } = require('@rollup/plugin-node-resolve')
+import { terser } from 'rollup-plugin-terser';
+import typescript from 'rollup-plugin-typescript2';
+import del from 'rollup-plugin-delete';
 
-const babel = require('rollup-plugin-babel')
-const { terser } = require('rollup-plugin-terser');
+import pkg from './package.json';
 
-
-
-const emptyFile = 'export default undefined'
-
-
-
-
-// ignore builtin requires
-function ignore() {
-    return {
-        transform(code, id) {
-            if (!id.includes('commonjs-external')) return
-
-            return {
-                code: emptyFile,
-                map: null
-            }
-        }
-    }
+const globals = {
+    '@riot-tools/state-utils': 'RiotStateUtils'
 };
 
-const plugins = [
-    ignore(),
-    nodeResolve(),
-    Commonjs(),
-    Json(),
-    babel({
-        ignore: [/[/\\]core-js/, /@babel[/\\]runtime/]
-    }),
-    terser()
+const libraryName = 'RiotMeiosis';
+
+export default [
+    {
+        input: 'lib/index.ts',
+        plugins: [
+
+            del({ targets: 'dist/*' }),
+
+            typescript({ useTsconfigDeclarationDir: true }),
+
+            terser(),
+        ],
+        output: [
+            {
+                name: libraryName,
+                file: pkg.browser,
+                format: 'iife',
+                sourcemap: true,
+                inlineDynamicImports: true,
+                globals
+            },
+            {
+                file: pkg.module,
+                format: 'es',
+                sourcemap: true
+            },
+            {
+                file: pkg.main,
+                name: libraryName,
+                format: 'umd',
+                sourcemap: true
+            }
+        ],
+        external: [
+            ...Object.keys(pkg.dependencies || {}),
+            ...Object.keys(pkg.peerDependencies || {}),
+            ...Object.keys(pkg.devDependencies || {}),
+        ]
+    }
 ];
-
-const output = (format) => ({
-    banner: '/* RiotMeiosis, @license MIT */',
-    name: 'RiotMeiosis',
-    format,
-    file: `dist/${format}.js`
-});
-
-module.exports = {
-    input: 'lib/index.js',
-    output: [
-        output('umd'),
-        output('es'),
-        output('cjs'),
-    ],
-    onwarn: function(error) {
-        if (/external dependency|Circular dependency/.test(error.message)) return
-        console.error(error.message) // eslint-disable-line
-    },
-    plugins
-}
