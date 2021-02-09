@@ -2,18 +2,25 @@
   "name": "riot-meiosis",
   "version": "1.2.0",
   "description": "Meiosis state manager for Riot using Erre",
-  "main": "dist/umd.js",
+  "main": "dist/cjs.js",
+  "browser": "dist/iife.js",
   "module": "dist/cjs.js",
   "jsnext:main": "dist/es.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "dist/umd.js",
-    "dist/cjs.js",
-    "dist/es.js",
-    "readme.md",
+    "dist",
+    "readme",
     "screenshots"
   ],
   "scripts": {
-    "start": "make watch"
+    "rollup": "rollup -c",
+    "test": "yarn test:one --recursive",
+    "test:one": "mocha -r @babel/register -r @babel/polyfill $MOCHAOPTS",
+    "watch": "nodemon -e ts,js -w lib -w test --ignore lib/rmdevtools.js -x 'yarn rollup && yarn test'",
+    "watch:only-test": "nodemon -e ts,js -w lib -w test --ignore lib/rmdevtools.js -x 'yarn test:one'",
+    "types": "tsc --declarationDir dist --declaration true --emitDeclarationOnly",
+    "semantic-release": "semantic-release",
+    "preview": "yarn rollup && npx http-server"
   },
   "repository": {
     "type": "git",
@@ -42,6 +49,9 @@
       "@babel/preset-env"
     ]
   },
+  "peerDependencies": {
+    "riot": "^5"
+  },
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/polyfill": "^7.12.1",
@@ -53,19 +63,20 @@
     "@rollup/plugin-commonjs": "^17.1.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.1.1",
+    "@rollup/plugin-typescript": "^8.1.1",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
     "chai": "^4",
     "cz-conventional-changelog": "^3",
-    "deep-diff": "^1.0.2",
-    "erre": "^2.2.0",
+    "fast-check": "^2.12.1",
     "husky": "^4",
-    "lodash.clonedeep": "^4.5.0",
     "mocha": "^6.1.4",
     "rollup": "^2.38.2",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-terser": "^7.0.2",
-    "semantic-release": "^17"
+    "semantic-release": "^17",
+    "strom": "^1.0.1",
+    "typescript": "^4.1.5"
   },
   "commitlint": {
     "extends": [
@@ -104,5 +115,6 @@
       "@semantic-release/npm",
       "@semantic-release/git"
     ]
-  }
+  },
+  "dependencies": {}
 }

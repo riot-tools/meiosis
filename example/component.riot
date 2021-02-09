@@ -15,7 +15,7 @@
 
     <h3>Items in state:</h3>
     <li each={ (item, i) in state.items }>
-        <input type="checkbox" checked={ item.checked } onchange={ (e) => { e.preventDefault(); setChecked(i, !item.checked) } }>
+        <input type="checkbox" checked={ item.checked } onchange={ setChecked(i) } }>
         { item.text }
     </li>
 
@@ -31,16 +31,22 @@
         const component = {
             state: { loading: false },
             setLoading (loading) { this.update({ loading }) },
-            setChecked(i, checked) {
+            setChecked(i) {
 
-                const { items } = RiotMeiosis.getState();
+                const self = this;
+                const items = RiotMeiosis.clone(this.state.items);
 
-                items[i].checked = checked;
+                return (e) => {
 
-                RiotMeiosis.getStream().push({ items });
+                    e.preventDefault();
+
+                    items[i].checked = e.target.checked;
+
+                    update({ items });
+                }
             }
         }
 
-        export default RiotMeiosis.connect(mapToState)(component);
+        export default connect(mapToState)(component);
     </script>
 </samplecomponent>

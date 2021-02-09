@@ -19,12 +19,11 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/5.2.0/riot+compiler.min.js"></script>
 
-    <script src="./dist/umd.js"></script>
+    <script src="./dist/iife.js"></script>
 
     <script>
-        const state = {
+        const initialState = {
             buttonclicked: 0,
-            someInput: '',
             items: [
                 { text: 'try riot meioses', checked: true },
                 { text: 'try rmdevtools', checked: false }
@@ -32,18 +31,30 @@
         };
 
 
-        const reducer = (newState, oldState) => ({
+        const generalReducer = ({ buttonclicked }, oldState) => ({
             ...oldState,
-            ...newState
+            buttonclicked: buttonclicked || oldState.buttonclicked
         });
 
-        RiotMeiosis.createStream(reducer, state);
+        const itemsReducer = ({ items }, oldState) => ({
+            ...oldState,
+            items: items || oldState.items
+        });
+
+        const {
+            stream,
+            connect,
+            update
+        } = RiotMeiosis(initialState, { statesToKeep: 100 });
+
+        stream.modify(itemsReducer)
+        stream.modify(generalReducer);
 
         window.clickme = () => {
 
-            const { buttonclicked } = RiotMeiosis.getState();
+            const { buttonclicked } = stream.state();
 
-            RiotMeiosis.update({ buttonclicked: buttonclicked+1 })
+            update({ buttonclicked: buttonclicked+1 })
         }
 
         (async function main() {
@@ -51,12 +62,12 @@
 
             riot.mount('samplecomponent');
 
-            await riot.register(
-                'rmdevtools',
-                RiotMeiosis.RMDevTools(RiotMeiosis)
-            );
+            // await riot.register(
+            //     'rmdevtools',
+            //     RiotMeiosis.RMDevTools(RiotMeiosis)
+            // );
 
-            riot.mount('rmdevtools');
+            // riot.mount('rmdevtools');
 
           }())
 

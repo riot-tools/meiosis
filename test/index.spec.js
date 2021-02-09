@@ -1,25 +1,8 @@
 import { expect } from 'chai';
 
-import {
-    connect,
-    getState,
-    createStream,
-    getStream
-} from '../lib';
+import RiotMeiosis, { clone } from '..';
 
-const clone = (obj) => {
-
-    const newObj = {};
-    for (const key in obj) {
-        if (typeof obj[key] === 'object') {
-            newObj[key] = clone(obj[key]);
-        }
-        else {
-            newObj[key] = obj[key];
-        }
-    }
-    return newObj;
-};
+console.warn = () => {};
 
 const defer = (obj = {}) => {
 
@@ -56,7 +39,7 @@ const stub = {
 
                 // Make connect aware of state changes by faking
                 // component lifecycle
-                onUpdated({}, mapToState(getState(), state, props));
+                onUpdated({}, mapToState(stub.stream.state(), state, props));
             }
 
             return retrn;
@@ -77,55 +60,40 @@ const stub = {
 
 describe('Riot Meiosis', function () {
 
-    it('should not create a stream without a reducer', function () {
-
-        expect(() => createStream()).to.throw(/reducer must be a function/);
-    });
-
-    it('should not create a stream without an initial state', function () {
-
-        expect(() => createStream(() => {})).to.throw(/initial state cannot be undefined or null/);
-        expect(() => createStream(() => {}, null)).to.throw(/initial state cannot be undefined or null/);
-    });
-
-    it('should create a stream', function () {
+    it('should create an instance', function () {
 
         const reducer = (newState, oldState) => ({
             ...oldState,
             ...newState
         });
 
-        const stream = createStream(reducer, stub.state);
+        const meiosis = RiotMeiosis(stub.state);
 
-        expect(stream).to.include.keys('on', 'off', 'connect', 'push', 'end', 'fork', 'next');
+        expect(meiosis).to.include.keys('stream', 'connect', 'update');
 
-        stub.stream = stream;
+        Object.assign(stub, meiosis);
     });
 
     it('should get the current state', function () {
 
-        expect(getState()).to.eql(stub.state);
-    });
-
-    it('should get the current stream', function () {
-
-        expect(getStream()).to.eq(stub.stream);
+        expect(stub.stream.state()).to.eql(stub.state);
     });
 
 
     it('should not connect if state mapper is undefined or bad', function () {
 
-        expect(() => connect()).to.throw(/mapToState must be a function/);
-        expect(() => connect({})).to.throw(/mapToState must be a function/);
-        expect(() => connect([])).to.throw(/mapToState must be a function/);
+        expect(() => stub.connect()).to.throw(/mapToState must be a function/);
+        expect(() => stub.connect({})).to.throw(/mapToState must be a function/);
+        expect(() => stub.connect([])).to.throw(/mapToState must be a function/);
     });
 
-    it('should not connect if component mapper is undefined or bad', function () {
+    it('should not connect if component mapper is bad', function () {
 
-        const fn = () => {}
-        expect(() => connect(fn, 1)).to.throw(/mapToComponent must be a function or object/);
-        expect(() => connect(fn, [])).to.throw(/mapToComponent must be a function or object/);
-        expect(() => connect(fn, "lol")).to.throw(/mapToComponent must be a function or object/);
+        const fn = () => {};
+
+        expect(() => stub.connect(fn, 1)).to.throw(/mapToComponent must be a function or object/);
+        expect(() => stub.connect(fn, [])).to.throw(/mapToComponent must be a function or object/);
+        expect(() => stub.connect(fn, "lol")).to.throw(/mapToComponent must be a function or object/);
     });
 
     it('should return connect HOF', function () {
@@ -133,19 +101,19 @@ describe('Riot Meiosis', function () {
         const fn = () => ({})
 
         // No map to component
-        expect(() => connect(fn)).to.not.throw();
+        expect(() => stub.connect(fn)).to.not.throw();
 
         // map to component object
-        expect(() => connect(fn, {})).to.not.throw();
+        expect(() => stub.connect(fn, {})).to.not.throw();
 
         // map to component function
-        expect(() => connect(fn, fn)).to.not.throw();
+        expect(() => stub.connect(fn, fn)).to.not.throw();
     });
 
     it('should connect state to component', function () {
 
         const component = clone(stub.component);
-        const connected = connect(stub.mapToState)(component);
+        const connected = stub.connect(stub.mapToState)(component);
 
         expect(connected.state).to.have.keys('something');
         expect(connected.state).to.not.have.keys('hasCandy');
@@ -176,8 +144,6 @@ describe('Riot Meiosis', function () {
             update = change;
         };
 
-        const stream = getStream();
-
         const runTest = () => {
             try {
                 expect(update).to.not.be.false;
@@ -191,12 +157,12 @@ describe('Riot Meiosis', function () {
             catch (e) {
                 q.rj(e);
             }
-            stream.off.value(runTest);
+            stub.stream.unlisten(runTest);
         };
 
-        stream.on.value(runTest);
+        stub.stream.listen(runTest);
 
-        stream.push({
+        stub.update({
             nestedState: {
                 ...stub.state.nestedState,
                 shemoves: true
@@ -216,8 +182,6 @@ describe('Riot Meiosis', function () {
             update = true;
         };
 
-        const stream = getStream();
-
         const runTest = () => {
             try {
                 expect(update).to.be.false;
@@ -226,12 +190,12 @@ describe('Riot Meiosis', function () {
             catch (e) {
                 q.rj(e);
             }
-            stream.off.value(runTest);
+            stub.stream.unlisten(runTest);
         };
 
-        stream.on.value(runTest);
+        stub.stream.listen(runTest);
 
-        stream.push({
+        stub.update({
             nestedState: {
                 ...stub.state.nestedState
             }
@@ -250,7 +214,6 @@ describe('Riot Meiosis', function () {
         stub.wasUpdated = () => { update = true };
         stub.wasUnmounted = () => { ranOriginal = true };
 
-        const stream = getStream();
 
         const runTest = () => {
             try {
@@ -261,15 +224,15 @@ describe('Riot Meiosis', function () {
             catch (e) {
                 q.rj(e);
             }
-            stream.off.value(runTest);
+            stub.stream.unlisten(runTest);
         };
 
-        stream.on.value(runTest);
+        stub.stream.listen(runTest);
 
         stub.connected.onBeforeUnmount();
 
         // trigger a change
-        stream.push({
+        stub.update({
             nestedState: {
                 ...stub.state.nestedState,
                 shemoves: 50
@@ -286,7 +249,7 @@ describe('Riot Meiosis', function () {
             fulanito: () => 'perez'
         };
 
-        const connected = connect(stub.mapToState, actions)(component);
+        const connected = stub.connect(stub.mapToState, actions)(component);
 
         stub.wasMounted = () => {};
 
@@ -317,7 +280,7 @@ describe('Riot Meiosis', function () {
             };
         };
 
-        const connected = connect(stub.mapToState, actions)(component);
+        const connected = stub.connect(stub.mapToState, actions)(component);
 
         stub.wasMounted = () => {};
 
@@ -347,7 +310,7 @@ describe('Riot Meiosis', function () {
             onBeforeMount.bind(component)(props, state);
         }
 
-        const connected = connect(stub.mapToState)(component);
+        const connected = stub.connect(stub.mapToState)(component);
 
         expect(connected.state).to.not.have.keys('definedLater');
 
