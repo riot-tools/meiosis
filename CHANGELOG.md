@@ -1,3 +1,10 @@
+# [2.0.0-next.3](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.2...v2.0.0-next.3) (2021-02-23)
+
+
+### Bug Fixes
+
+* 🐛 update documentation ([be37fe0](https://github.com/riot-tools/meiosis/commit/be37fe09cad2bd510cca97882ac3f46b10ea08a7))
+
 # [2.0.0-next.2](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.1...v2.0.0-next.2) (2021-02-23)
 
 
