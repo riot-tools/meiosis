@@ -1,3 +1,21 @@
+# [2.0.0-next.1](https://github.com/damusix/riot-meiosis/compare/v1.2.0...v2.0.0-next.1) (2021-02-23)
+
+
+### Features
+
+* 🎸 v2 rewrite ([810dc97](https://github.com/damusix/riot-meiosis/commit/810dc97400c764f36f03f97ea5e9f101f75d5cae)), closes [#6](https://github.com/damusix/riot-meiosis/issues/6)
+
+
+### BREAKING CHANGES
+
+* 🧨 no more getState, getStream. connect functions no longer. Now requires
+instantiation via `new` constructor.
+
+feat: 🎸 2 two clone updates
+
+Bidirectional updates among clones. All tests passing. Added
+`goToState(sid: number)`, but needs tests. Add github actions.
+
 # [1.2.0](https://github.com/damusix/riot-meiosis/compare/v1.1.8...v1.2.0) (2021-02-08)
 
 

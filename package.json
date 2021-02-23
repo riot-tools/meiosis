@@ -1,6 +1,6 @@
 {
   "name": "riot-meiosis",
-  "version": "1.2.0",
+  "version": "2.0.0-next.1",
   "description": "Meiosis state manager for Riot using Erre",
   "main": "dist/cjs.js",
   "browser": "dist/iife.js",
