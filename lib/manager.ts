@@ -32,7 +32,7 @@ export type ManagerState = {
     childListener?: Function|null;
 };
 
-export type ModifierFunction = (value: any, state?: any, ignore?: symbol) => any
+export type ReducerFunction = (value: any, state?: any, ignore?: symbol) => any
 
 // For skipping state modification
 const IGNORE = Symbol();
@@ -55,7 +55,7 @@ export class Manager {
     _internals: ManagerState;
     _states: Map<number, any>|null = null;
 
-    _modifiers: Set<ModifierFunction>|null = null;
+    _reducers: Set<ReducerFunction>|null = null;
     _listeners: Set<Function>|null = null;
 
     _parent: Manager|null = null;
@@ -64,8 +64,8 @@ export class Manager {
 
         definePrivateProperties(this, {
 
-            // Holds state modifiers
-            _modifiers: new Set(),
+            // Holds state reducers
+            _reducers: new Set(),
 
             // Holds listeners
             _listeners: new Set(),
@@ -129,11 +129,11 @@ export class Manager {
     };
 
     /**
-     * Push an update
+     * Pushes an update to the state.
      * @param value New state
      * @param {Array} flow This can be ignored. Tracks flow of incoming updates to prevent double updates on clones.
      */
-    update(value: any, flow?: Manager[]) {
+    dispatch(value: any, flow?: Manager[]) {
 
         /**
          * If the update is coming back to itself, do not update.
@@ -143,7 +143,7 @@ export class Manager {
         }
 
         const {
-            _modifiers,
+            _reducers,
             _listeners
         } = this;
 
@@ -159,12 +159,12 @@ export class Manager {
 
 
 
-        // If no modifiers present, state will be overwritten
-        if (!valueIsUndefined && _modifiers.size) {
+        // If no reducers present, state will be overwritten
+        if (!valueIsUndefined && _reducers.size) {
 
-            for (const modifier of _modifiers) {
+            for (const reducer of _reducers) {
 
-                const _modified = modifier(nextState, prevState || currentState, IGNORE);
+                const _modified = reducer(nextState, prevState || currentState, IGNORE);
 
                 // Ignore modification if ignore symbol
                 if (_modified === IGNORE) {
@@ -199,34 +199,39 @@ export class Manager {
     }
 
     /**
-     * Function that modifies state.
-     * Pass a function declaration for ability to return `this.IGNORE`
-     * @param {function} func
-     * @returns {Manager} Strom instance
+     * Adds a function that modifies the dispatched state before registering it as a new state item.
+     * You can add as many of these as you want.
+     * @param {function} fn
+     * @returns {Manager} manager instance
      */
-    modify(func: ModifierFunction){
+    addReducer(...fns: ReducerFunction[]){
 
-        assertFunction('modifier', func);
+        for (const fn of fns) {
 
-        // Save modifier to holder
-        this._modifiers.add(func);
+            assertFunction('reducer', fn);
+
+            // Save reducer to holder
+            this._reducers.add(fn);
+        }
 
         return this;
     }
 
 
     /**
-     * Removes a modifier when passed existing function reference
-     * @param {function} func
-     * @returns {Manager} Strom instance
+     * Removes reducers from the state stream.
+     * They will not longer modify the state once they are removed.
+     * @param {function} fn
+     * @returns {Manager} manager instance
      */
-    unmodify(func: ModifierFunction) {
+    removeReducer(...fns: ReducerFunction[]) {
 
-        assertFunction('modifier', func);
+        for (const fn of fns) {
 
-        if (this._modifiers.has(func)) {
+            if (this._reducers.has(fn)) {
 
-            this._modifiers.delete(func);
+                this._reducers.delete(fn);
+            }
         }
 
         return this;
@@ -234,33 +239,17 @@ export class Manager {
 
 
     /**
-     * Adds a listener that runs when stream update is executed
-     * @param {function} func
-     * @returns {Manager} Strom instance
+     * Adds a listener that runs when updates are dispatched
+     * @param {function} fns
+     * @returns {Manager} manager instance
      */
-    listen(func: Function) {
+    addListener(...fns: Function[]) {
 
-        assertFunction('listener', func);
+        for (const fn of fns) {
+            assertFunction('listener', fn);
 
-        // Save listener to holder
-        this._listeners.add(func);
-
-        return this;
-    }
-
-
-    /**
-     * Removes a listener when passed existing function reference
-     * @param {function} func
-     * @returns {Manager} Strom instance
-     */
-    unlisten(func: Function) {
-
-        assertFunction('listener', func);
-
-        if (this._listeners.has(func)) {
-
-            this._listeners.delete(func);
+            // Save listener to holder
+            this._listeners.add(fn);
         }
 
         return this;
@@ -268,7 +257,26 @@ export class Manager {
 
 
     /**
-     * Returns an array of all states
+     * Removes any attached listeners
+     * @param {function} func
+     * @returns {Manager} manager instance
+     */
+    removeListener(...fns: Function[]) {
+
+        for (const fn of fns) {
+
+            if (this._listeners.has(fn)) {
+
+                this._listeners.delete(fn);
+            }
+        }
+
+        return this;
+    }
+
+
+    /**
+     * Returns an array of all stored states
      * @returns {array} Array of states
      */
     states() {
@@ -332,7 +340,11 @@ export class Manager {
         });
     }
 
-    private goToState(sid: number) {
+    /**
+     * Travel to a particular state
+     * @param sid state ID
+     */
+    goToState(sid: number) {
 
         const { _internals, _states } = this;
         const { state } = _internals;
@@ -383,13 +395,13 @@ export class Manager {
     }
 
     /**
-     * Creates a child instance of Strom. Receives parent's modifiers
-     * and will update whever parent is updated. Adding modifiers and
-     * listeners will not affect parent Strom instance.
+     * Creates a child instance of manager. Receives parent's reducers
+     * and will update whever parent is updated. Adding reducers and
+     * listeners will not affect parent manager instance.
      *
      * @param {ManagerOptions} options
      *
-     * @returns {Manager} Strom instance
+     * @returns {Manager} manager instance
      */
     clone(options: ManagerOptions = {}) {
 
@@ -412,9 +424,9 @@ export class Manager {
             return;
         }
 
-        for (const mod of _parent._modifiers) {
+        for (const reducer of _parent._reducers) {
 
-            self._modifiers.add(mod);
+            self._reducers.add(reducer);
         }
 
         /**
@@ -426,11 +438,11 @@ export class Manager {
                 flow.push(self);
             }
 
-            self.update(value, flow || [_parent]);
+            self.dispatch(value, flow || [_parent]);
         };
 
 
-        _parent.listen(updateChild);
+        _parent.addListener(updateChild);
 
         self._setInternals({ parentListener: updateChild });
 
@@ -449,12 +461,12 @@ export class Manager {
                     flow.push(self);
                 }
 
-                return _parent.update(value, flow || [self]);
+                return _parent.dispatch(value, flow || [self]);
             };
 
             _parent._setInternals({ childListener: updateParent });
 
-            self.listen(updateParent);
+            self.addListener(updateParent);
         }
     }
 }

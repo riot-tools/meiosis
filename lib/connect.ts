@@ -78,6 +78,9 @@ const connect = function (
             if (hasDiff) store.update(change);
         };
 
+        // Dispatch directly from the component
+        component.dispatch = (value: any) => connection.dispatch(value);
+
         // Merge global state to local state.
         // Global state supersedes local state.
         component.onBeforeMount = function (props: Object, state = {}) {
@@ -85,7 +88,7 @@ const connect = function (
             store.update = (...args: any[]) => this.update.apply(this, args);
 
             // When state is updated, update component state.
-            connection.listen(store.listener);
+            connection.addListener(store.listener);
 
 
             if (store.onBeforeMount) {
@@ -136,7 +139,7 @@ const connect = function (
             }
 
             if (store.listener) {
-                connection.unlisten(store.listener);
+                connection.removeListener(store.listener);
             }
         };
 

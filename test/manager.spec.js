@@ -9,11 +9,11 @@ describe('State Manager', function () {
 
     it('has functions to manage state, modifiers and listeners', () => {
 
-        expect(stub.stream.modify).to.be.an.instanceof(Function);
-        expect(stub.stream.unmodify).to.be.an.instanceof(Function);
+        expect(stub.stream.addReducer).to.be.an.instanceof(Function);
+        expect(stub.stream.removeReducer).to.be.an.instanceof(Function);
 
-        expect(stub.stream.listen).to.be.an.instanceof(Function);
-        expect(stub.stream.unlisten).to.be.an.instanceof(Function);
+        expect(stub.stream.addListener).to.be.an.instanceof(Function);
+        expect(stub.stream.removeListener).to.be.an.instanceof(Function);
 
         expect(stub.stream.states).to.be.an.instanceof(Function);
 
@@ -58,7 +58,7 @@ describe('State Manager', function () {
         const start = { oy: true };
         const { stream } = new RiotMeiosis(start);
 
-        stub.modifier = (next, prev) => ({
+        stub.reducer = (next, prev) => ({
             ...prev,
             ...next
         });
@@ -69,12 +69,12 @@ describe('State Manager', function () {
             stub.prev = prev;
         };
 
-        stream.modify(stub.modifier);
+        stream.addReducer(stub.reducer);
 
-        stream.listen(stub.listener);
+        stream.addListener(stub.listener);
 
         const check = { blyot: true };
-        stream.update(check);
+        stream.dispatch(check);
 
         expect(stub.next).to.eql({
             oy: true,
@@ -89,78 +89,78 @@ describe('State Manager', function () {
         const start = { oy: true };
         const { stream } = new RiotMeiosis(start);
 
-        stream.listen(stub.listener);
+        stream.addListener(stub.listener);
 
         stub.next = null;
         stub.prev = null;
 
-        stub.stream.unlisten(stub.listener);
-        stub.stream.update({ pepe: true });
+        stub.stream.removeListener(stub.listener);
+        stub.stream.dispatch({ pepe: true });
 
         expect(stub).to.include({ next: null, prev: null });
     });
 
-    it('adds a modifer', () => {
+    it('adds a reducer', () => {
 
         const { stream } = new RiotMeiosis();
 
-        expect(stream._modifiers.size).to.eq(0);
+        expect(stream._reducers.size).to.eq(0);
 
-        stub.modifier = (state) => {
+        stub.reducer = (state) => {
 
             state.updated = true;
             return state;
         };
 
-        stream.modify(stub.modifier);
-        expect(stream._modifiers.size).to.eq(1);
+        stream.addReducer(stub.reducer);
+        expect(stream._reducers.size).to.eq(1);
     });
 
     it('modifies a new state', () => {
 
         const { stream } = new RiotMeiosis();
-        stream.modify(stub.modifier);
+        stream.addReducer(stub.reducer);
 
         expect(stream.state().updated).to.eq(undefined);
 
-        stream.update({ updated: false });
+        stream.dispatch({ updated: false });
 
         expect(stream.state().updated).to.eq(true);
 
     });
 
-    it('removes a modifier', () => {
+    it('removes a reducer', () => {
 
         const { stream } = new RiotMeiosis();
 
-        const modifier = (state) => {
+        const reducer = (state) => {
 
             state.updated = true;
             return state;
         };
 
-        stream.modify(modifier);
-        expect(stream._modifiers.size).to.eq(1);
-        stream.unmodify(modifier);
+        stream.addReducer(reducer);
+        expect(stream._reducers.size).to.eq(1);
+        stream.removeReducer(reducer);
 
-        stream.update({ updated: false });
+        stream.dispatch({ updated: false });
 
         const state = stream.state();
 
-        expect(stream._modifiers.size).to.eq(0);
+        expect(stream._reducers.size).to.eq(0);
         expect(stream.state().updated).to.eq(false);
     });
 
     it('makes current state the passed value if no modifiers exist', () => {
 
         const check = { blyat: true };
-        stub.stream.update(check);
+        stub.stream.dispatch(check);
         const state = stub.stream.state();
 
         expect(state).to.eql(check)
     });
 
-    it('does not update state if modifier returns ignore', () => {
+    it('does not update state if reducer returns ignore', () => {
 
         const { stream } = new RiotMeiosis({ oy: true, shouldIgnore: true });
 
@@ -186,10 +186,10 @@ describe('State Manager', function () {
             otherModifier: true
         });
 
-        stream.modify(modifier1);
-        stream.modify(modifier2);
+        stream.addReducer(modifier1);
+        stream.addReducer(modifier2);
 
-        stream.update({ blyot: true, shouldIgnore: true });
+        stream.dispatch({ blyot: true, shouldIgnore: true });
 
         const state = stream.state();
 
@@ -211,11 +211,11 @@ describe('State Manager', function () {
             statesToKeep: 3
         });
 
-        stream.update({ a: 1 });
-        stream.update({ a: 2 });
-        stream.update({ a: 3 });
-        stream.update({ a: 4 });
-        stream.update({ a: 5 });
+        stream.dispatch({ a: 1 });
+        stream.dispatch({ a: 2 });
+        stream.dispatch({ a: 3 });
+        stream.dispatch({ a: 4 });
+        stream.dispatch({ a: 5 });
 
         expect(stream.states()).to.have.length(3);
     });
@@ -228,16 +228,16 @@ describe('State Manager', function () {
             flushOnRead: true
         });
 
-        stream.update({ a: 1 });
-        stream.update({ a: 2 });
+        stream.dispatch({ a: 1 });
+        stream.dispatch({ a: 2 });
 
         const beforeListeners = stream.states().length;
 
-        stream.listen(() => {});
+        stream.addListener(() => {});
 
-        stream.update({ a: 3 });
-        stream.update({ a: 4 });
-        stream.update({ a: 5 });
+        stream.dispatch({ a: 3 });
+        stream.dispatch({ a: 4 });
+        stream.dispatch({ a: 5 });
 
         const afterListeners = stream.states().length;
 
@@ -257,11 +257,11 @@ describe('State Manager', function () {
             statesToKeep: 10
         });
 
-        stub.stream.update({ a: 1 });
-        stub.stream.update({ a: 2 });
-        stub.stream.update({ a: 3 });
-        stub.stream.update({ a: 4 });
-        stub.stream.update({ a: 5 });
+        stub.stream.dispatch({ a: 1 });
+        stub.stream.dispatch({ a: 2 });
+        stub.stream.dispatch({ a: 3 });
+        stub.stream.dispatch({ a: 4 });
+        stub.stream.dispatch({ a: 5 });
 
         const current = stub.stream.state();
 
@@ -307,27 +307,27 @@ describe('State Manager', function () {
         stub.parentListener = 0;
         stub.parentModifier = 0;
 
-        stream.listen(() => {
+        stream.addListener(() => {
             stub.parentListener++;
         });
 
-        stream.modify((n, o) => {
+        stream.addReducer((n, o) => {
             stub.parentModifier++;
             return { ...o, ...n };
         });
 
-        stream.update ({ a: 1 });
+        stream.dispatch ({ a: 1 });
 
         const parent1stState = stream.state();
         const clone = stream.clone();
         const clone1stSate = clone.state();
 
-        clone.update({ a: 2 });
+        clone.dispatch({ a: 2 });
 
         const parent2ndState = stream.state();
         const clone2ndState = clone.state();
 
-        stream.update ({ a: 3 });
+        stream.dispatch ({ a: 3 });
 
         const parent3rdState = stream.state();
         const clone3rdState = clone.state();
@@ -347,14 +347,14 @@ describe('State Manager', function () {
         const { stream } = new RiotMeiosis({ a: 0 });
 
         stub.parentListener = 0;
-        stub.modifier = 0;
+        stub.reducer = 0;
 
-        stream.listen(() => {
+        stream.addListener(() => {
             stub.parentListener++;
         });
 
-        stream.modify((n, o) => {
-            stub.modifier++;
+        stream.addReducer((n, o) => {
+            stub.reducer++;
             return { ...o, ...n };
         });
 
@@ -363,17 +363,17 @@ describe('State Manager', function () {
         expect(stream.states()).to.have.length(1);
         expect(clone.states()).to.have.length(1);
 
-        stream.update({ parent: true });
+        stream.dispatch({ parent: true });
 
         expect(stream.states()).to.have.length(2);
         expect(clone.states()).to.have.length(2);
 
-        clone.update({ child: true });
+        clone.dispatch({ child: true });
 
         expect(stream.states()).to.have.length(3);
         expect(clone.states()).to.have.length(3);
 
-        expect(stub.modifier).to.equal(4);
+        expect(stub.reducer).to.equal(4);
 
         expect(clone.state()).to.include.keys('parent', 'child');
         expect(stream.state()).to.include.keys('parent', 'child');

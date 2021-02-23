@@ -3,24 +3,24 @@ import ConnectFactory, { ConnectFunction } from './connect';
 
 type AnyState = Object | Array<any> | String | Map<any,any> | Set<any>;
 
-type updateFn = (value: any) => any;
-
 export const createStateStream = (
     initialState: AnyState,
     options?: ManagerOptions
 ): {
     stream: Manager,
     connect: ConnectFunction,
-    update: (value: any) => Manager
+    dispatch: (value: any) => Manager
 } => {
 
     const stream = new Manager(initialState, options || {});
 
     const connect = ConnectFactory(stream);
 
-    const update: updateFn = (value) => stream.update(value);
+    const dispatch: (value: any) => any = (value) => (
+        stream.dispatch(value)
+    );
 
-    return { stream, connect, update };
+    return { stream, connect, dispatch };
 };
 
 export default createStateStream;

@@ -69,7 +69,7 @@ describe('Riot Meiosis', function () {
 
         const meiosis = RiotMeiosis(stub.state);
 
-        expect(meiosis).to.include.keys('stream', 'connect', 'update');
+        expect(meiosis).to.include.keys('stream', 'connect', 'dispatch');
 
         Object.assign(stub, meiosis);
     });
@@ -157,12 +157,12 @@ describe('Riot Meiosis', function () {
             catch (e) {
                 q.rj(e);
             }
-            stub.stream.unlisten(runTest);
+            stub.stream.removeListener(runTest);
         };
 
-        stub.stream.listen(runTest);
+        stub.stream.addListener(runTest);
 
-        stub.update({
+        stub.dispatch({
             nestedState: {
                 ...stub.state.nestedState,
                 shemoves: true
@@ -190,12 +190,12 @@ describe('Riot Meiosis', function () {
             catch (e) {
                 q.rj(e);
             }
-            stub.stream.unlisten(runTest);
+            stub.stream.removeListener(runTest);
         };
 
-        stub.stream.listen(runTest);
+        stub.stream.addListener(runTest);
 
-        stub.update({
+        stub.dispatch({
             nestedState: {
                 ...stub.state.nestedState
             }
@@ -224,15 +224,15 @@ describe('Riot Meiosis', function () {
             catch (e) {
                 q.rj(e);
             }
-            stub.stream.unlisten(runTest);
+            stub.stream.removeListener(runTest);
         };
 
-        stub.stream.listen(runTest);
+        stub.stream.addListener(runTest);
 
         stub.connected.onBeforeUnmount();
 
         // trigger a change
-        stub.update({
+        stub.dispatch({
             nestedState: {
                 ...stub.state.nestedState,
                 shemoves: 50
