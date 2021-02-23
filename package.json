@@ -1,7 +1,7 @@
 {
-  "name": "riot-meiosis",
+  "name": "@riot-tools/meiosis",
   "version": "2.0.0-next.1",
-  "description": "Meiosis state manager for Riot using Erre",
+  "description": "Dependency free state manager for Riot inspired by Meiosis pattern",
   "main": "dist/cjs.js",
   "browser": "dist/iife.js",
   "module": "dist/cjs.js",
@@ -24,10 +24,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:damusix/riot-meiosis.git"
+    "url": "git@github.com:riot-tools/meiosis.git"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "keywords": [
     "riot",
@@ -41,9 +42,9 @@
   "author": "Danilo Alonso",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/damusix/riot-meiosis/issues"
+    "url": "https://github.com/riot-tools/meiosis/issues"
   },
-  "homepage": "https://github.com/damusix/riot-meiosis#readme",
+  "homepage": "https://github.com/riot-tools/meiosis#readme",
   "babel": {
     "presets": [
       "@babel/preset-env"
