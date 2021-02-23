@@ -1,3 +1,10 @@
+# [2.0.0-next.2](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.1...v2.0.0-next.2) (2021-02-23)
+
+
+### Features
+
+* 🤖 update package name ([8533bcf](https://github.com/riot-tools/meiosis/commit/8533bcf2e2cd26709fa7bb18a3a24f1bb4d7e8fd))
+
 # [2.0.0-next.1](https://github.com/damusix/riot-meiosis/compare/v1.2.0...v2.0.0-next.1) (2021-02-23)
 
 
