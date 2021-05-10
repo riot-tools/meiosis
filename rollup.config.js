@@ -1,83 +1,50 @@
-const commonjs = require('@rollup/plugin-commonjs')
-const json = require('@rollup/plugin-json')
-const { nodeResolve } = require('@rollup/plugin-node-resolve')
-const { terser } = require('rollup-plugin-terser');
-const babel = require('rollup-plugin-babel');
-const typescript = require('@rollup/plugin-typescript')
+import { terser } from 'rollup-plugin-terser';
+import typescript from 'rollup-plugin-typescript2';
+import del from 'rollup-plugin-delete';
 
-const pkg = require('./package.json');
+import pkg from './package.json';
+import tsconfig from './tsconfig.json';
 
-const moduleName = 'RiotMeiosis';
+export default [
+    {
+        input: 'lib/index.ts',
+        plugins: [
 
-const extensions = ['.js', '.jsx', '.ts', '.tsx']
-const emptyFile = 'export default undefined'
+            del({ targets: 'dist/*' }),
 
-// ignore builtin requires
-function ignore() {
-    return {
-        transform(code, id) {
-            if (!id.includes('commonjs-external')) return
+            typescript({
+                typescript: require('typescript'),
+                tsconfig: 'tsconfig.json',
+                tsconfigOverride: tsconfig
+            }),
 
-            return {
-                code: emptyFile,
-                map: null
+            terser(),
+        ],
+        output: [
+            {
+                name: 'RiotMeiosis',
+                file: pkg.main,
+                format: 'umd',
+                sourcemap: true,
+                inlineDynamicImports: true,
+            },
+            {
+                name: 'RiotMeiosis',
+                file: pkg.browser,
+                format: 'iife',
+                sourcemap: true,
+                inlineDynamicImports: true,
+            },
+            {
+                file: pkg.module,
+                format: 'es',
+                sourcemap: true
             }
-        }
+        ],
+        external: [
+            ...Object.keys(pkg.dependencies || {}),
+            ...Object.keys(pkg.peerDependencies || {}),
+            ...Object.keys(pkg.devDependencies || {}),
+        ]
     }
-};
-
-const iifeAfterWrite = () => ({
-    generateBundle(_, bundle) {
-
-        const { code } = bundle['iife.js'];
-        bundle['iife.js'].code = code.replace(/\s$/, `${moduleName} = Object.assign(${moduleName}.default, ${moduleName});\n`);
-    }
-});
-
-const cjsAfterWrite = () => ({
-    generateBundle(_, bundle) {
-
-        const { code } = bundle['cjs.js'];
-        bundle['cjs.js'].code = code.replace(/\s$/, `module.exports = Object.assign(exports.default, exports);\n`);
-    }
-});
-
-const plugins = [
-    ignore(),
-    json(),
-    typescript(),
-    nodeResolve({ extensions }),
-    commonjs(),
-    babel({
-        extensions,
-        ignore: [/[/\\]core-js/, /@babel[/\\]runtime/]
-    }),
-    terser()
 ];
-
-const output = (format, etc = {}) => ({
-    banner: `/* ${moduleName}, @license MIT */`,
-    name: moduleName,
-    sourcemap: true,
-    format,
-    file: `dist/${format}.js`,
-    ...etc
-});
-
-module.exports = {
-    input: 'lib/index.ts',
-    external: [
-      ...Object.keys(pkg.dependencies || {}),
-      ...Object.keys(pkg.peerDependencies || {}),
-    ],
-    output: [
-        output('iife', { plugins: [iifeAfterWrite()] }),
-        output('cjs', { plugins: [cjsAfterWrite()] }),
-        output('es'),
-    ],
-    onwarn: function(error) {
-        if (/external dependency|Circular dependency/.test(error.message)) return
-        console.error(error.message) // eslint-disable-line
-    },
-    plugins
-}

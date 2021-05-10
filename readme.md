@@ -1,39 +1,39 @@
 
-# Riot Meiosis
+# Riot Meiosis <!-- omit in toc -->
 
 Meiosis state manager for Riot using Erre. [Learn more about meiosis](http://RiotMeiosis.js.org).
 
-- [Riot Meiosis](#riot-meiosis)
-  - [Usage](#usage)
-  - [API](#api)
-    - [`createStateStream(initialState, options)`](#createstatestreaminitialstate-options)
-    - [`clone(object|array|map|set)`](#cloneobjectarraymapset)
-    - [`diff(a, b)`](#diffa-b)
-  - [Instance API](#instance-api)
-    - [`stream`](#stream)
-    - [`dispatch(value)`](#dispatchvalue)
-    - [`connect(mapToState, mapToComponent)(RiotComponent)`](#connectmaptostate-maptocomponentriotcomponent)
-  - [Stream API](#stream-api)
-    - [`dispatch(update)`](#dispatchupdate)
-    - [`addReducer(...Function[])`](#addreducerfunction)
-    - [`removeReducer(...Function[])`](#removereducerfunction)
-    - [`addListener(...Function[])`](#addlistenerfunction)
-    - [`removeListener(...Function[])`](#removelistenerfunction)
-    - [`states()`](#states)
-    - [`state()`](#state)
-    - [`flushStates()`](#flushstates)
-    - [`resetState()`](#resetstate)
-    - [`goToState(stateID)`](#gotostatestateid)
-    - [`prevState()`](#prevstate)
-    - [`nextState()`](#nextstate)
-    - [`clone(ManagerOptions)`](#clonemanageroptions)
-  - [Types](#types)
-    - [`createStateStream`](#createstatestream)
-    - [`clone` and `diff`](#clone-and-diff)
-    - [`stream`](#stream-1)
-    - [`connect`](#connect)
+- [Usage](#usage)
+- [API](#api)
+  - [`createStateStream(initialState, options)`](#createstatestreaminitialstate-options)
+  - [`clone(object|array|map|set)`](#cloneobjectarraymapset)
+  - [`diff(a, b)`](#diffa-b)
+- [Instance API](#instance-api)
+  - [`stream`](#stream)
+  - [`dispatch(value)`](#dispatchvalue)
+  - [`connect(mapToState, mapToComponent)(RiotComponent)`](#connectmaptostate-maptocomponentriotcomponent)
+- [Stream API](#stream-api)
+  - [`dispatch(update)`](#dispatchupdate)
+  - [`addReducer(...Function[])`](#addreducerfunction)
+  - [`removeReducer(...Function[])`](#removereducerfunction)
+  - [`addListener(...Function[])`](#addlistenerfunction)
+  - [`removeListener(...Function[])`](#removelistenerfunction)
+  - [`states()`](#states)
+  - [`state()`](#state)
+  - [`flushStates()`](#flushstates)
+  - [`resetState()`](#resetstate)
+  - [`goToState(stateID)`](#gotostatestateid)
+  - [`prevState()`](#prevstate)
+  - [`nextState()`](#nextstate)
+  - [`clone(ManagerOptions)`](#clonemanageroptions)
+- [Typings](#typings)
+  - [`createStateStream`](#createstatestream)
+  - [`clone` and `diff`](#clone-and-diff)
+  - [`Manager`](#manager)
+  - [`ConnectFunction`](#connectfunction)
 
 Key things to note:
+
 - Implements a stream mechanism to update state
 - Comes with a `connect` function to wrap stream functionality
 - Components attempt to update when updates are dispatched
@@ -42,12 +42,12 @@ Key things to note:
 
 ## Usage
 
-```
+```sh
 npm i --save riot-meiosis
 ```
 
-
 `./appState.js`
+
 ```js
 import createStateStream from 'riot-meiosis';
 
@@ -97,6 +97,7 @@ export default appState;
 ```
 
 In your `.riot` files:
+
 ```html
 
 <myComponent>
@@ -178,7 +179,6 @@ const {
 
 ```
 
-
 ### `createStateStream(initialState, options)`
 
 Creates an instance of an application state. Returns an object with `connect`, `stream,` and `dispatch`. See [Instance API](#instance-api).
@@ -190,7 +190,6 @@ Generates a deep clone of any object or iterable.
 ### `diff(a, b)`
 
 Compares two values to detect if there are any changes. Recursively traverses objects and iterables. Returns `true` as soon as a single change is detected, otherwise returns `false`. Does not compare memmory reference, but rather structure.
-
 
 ## Instance API
 
@@ -285,7 +284,6 @@ stream.removeListener(
 );
 ```
 
-
 ### `states()`
 
 Returns an history of all saved states, if any are being kept. The amount returned is affect by `statesToKeep` and `flushOnRead` options.
@@ -306,7 +304,6 @@ Sets the current state back to whatever it was. Useful for where stepping forwar
 
 Travel to a particular state. Does not work with `flushOnRead` option.
 
-
 ### `prevState()`
 
 Go back 1 state. Does not work with `flushOnRead` option.
@@ -314,7 +311,6 @@ Go back 1 state. Does not work with `flushOnRead` option.
 ### `nextState()`
 
 Go forward 1 state. Does not work with `flushOnRead` option.
-
 
 ### `clone(ManagerOptions)`
 
@@ -334,8 +330,7 @@ clone.dispatch({ parentShouldReceive: true });
 expect(stream.state().parentShouldReceive).to.be.true();
 ```
 
-
-## Types
+## Typings
 
 ### `createStateStream`
 
@@ -356,7 +351,7 @@ declare const clone: (original: any) => any;
 declare const diff: (change: any, current: any) => boolean;
 ```
 
-### `stream`
+### `Manager`
 
 ```ts
 
@@ -413,7 +408,7 @@ declare class Manager {
 }
 ```
 
-### `connect`
+### `ConnectFunction`
 
 ```ts
 interface ConnectFunction {
@@ -421,4 +416,3 @@ interface ConnectFunction {
 }
 declare const connectFactory: (stateStream: Manager) => ConnectFunction;
 ```
-
