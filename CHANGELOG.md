@@ -1,3 +1,10 @@
+# [2.0.0-next.4](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.3...v2.0.0-next.4) (2021-05-10)
+
+
+### Bug Fixes
+
+* 🐛 rollup conf ([4632d07](https://github.com/riot-tools/meiosis/commit/4632d0785ff1c0dd91a81b31094b67fdbbbeb533))
+
 # [2.0.0-next.3](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.2...v2.0.0-next.3) (2021-02-23)
 
 
