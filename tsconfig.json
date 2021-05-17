@@ -1,19 +1,26 @@
 {
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "lib": ["es6", "DOM"],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "noEmitOnError": false,
-    "noUnusedParameters": true,
-    "pretty": true,
-    "sourceMap": true,
-    "target": "esnext",
-    "outDir": "dist",
-    "rootDir": "lib"
-  },
-  "paths": {
-    "tslib" : ["./node_modules/tslib/tslib.d.ts"]
-  }
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "lib": [
+            "es6",
+            "DOM"
+        ],
+        "module": "esnext",
+        "moduleResolution": "node",
+        "noEmitOnError": false,
+        "noUnusedParameters": true,
+        "pretty": true,
+        "sourceMap": true,
+        "declaration": true,
+        "target": "esnext",
+        "outDir": "dist",
+        "rootDir": "lib"
+    },
+    "paths": {
+        "tslib": [
+            "./node_modules/tslib/tslib.d.ts"
+        ]
+    },
+    "exclude": ["test","example"]
 }

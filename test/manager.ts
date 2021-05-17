@@ -1,27 +1,30 @@
 import { expect } from 'chai';
 
-import RiotMeiosis, { clone } from '..';
+import RiotMeiosis from '../lib';
 
 
-let stub = new RiotMeiosis();
+const stub: any = {
+
+};
 
 describe('State Manager', function () {
 
     it('has functions to manage state, modifiers and listeners', () => {
 
-        expect(stub.stream.addReducer).to.be.an.instanceof(Function);
-        expect(stub.stream.removeReducer).to.be.an.instanceof(Function);
+        const store = new RiotMeiosis({});
+        expect(store.stream.addReducer).to.be.an.instanceof(Function);
+        expect(store.stream.removeReducer).to.be.an.instanceof(Function);
 
-        expect(stub.stream.addListener).to.be.an.instanceof(Function);
-        expect(stub.stream.removeListener).to.be.an.instanceof(Function);
+        expect(store.stream.addListener).to.be.an.instanceof(Function);
+        expect(store.stream.removeListener).to.be.an.instanceof(Function);
 
-        expect(stub.stream.states).to.be.an.instanceof(Function);
+        expect(store.stream.states).to.be.an.instanceof(Function);
 
     });
 
     it('returns array of states', () => {
 
-        const { stream } = new RiotMeiosis();
+        const { stream } = new RiotMeiosis({});
 
         const states = stream.states();
         expect(states.constructor).to.eq(Array);
@@ -29,7 +32,7 @@ describe('State Manager', function () {
 
     it('returns current state', () => {
 
-        const { stream } = new RiotMeiosis();
+        const { stream } = new RiotMeiosis({});
 
         const state = stream.state();
         expect(state.constructor).to.eq(Object);
@@ -37,7 +40,7 @@ describe('State Manager', function () {
 
     it('sets empty object as default state', () => {
 
-        const { stream } = new RiotMeiosis();
+        const { stream } = new RiotMeiosis({});
 
         const state = stream.state();
         expect(Object.keys(state)).to.have.length(0);
@@ -94,15 +97,15 @@ describe('State Manager', function () {
         stub.next = null;
         stub.prev = null;
 
-        stub.stream.removeListener(stub.listener);
-        stub.stream.dispatch({ pepe: true });
+        stream.removeListener(stub.listener);
+        stream.dispatch({ pepe: true });
 
         expect(stub).to.include({ next: null, prev: null });
     });
 
     it('adds a reducer', () => {
 
-        const { stream } = new RiotMeiosis();
+        const { stream } = new RiotMeiosis({});
 
         expect(stream._reducers.size).to.eq(0);
 
@@ -118,7 +121,7 @@ describe('State Manager', function () {
 
     it('modifies a new state', () => {
 
-        const { stream } = new RiotMeiosis();
+        const { stream } = new RiotMeiosis({});
         stream.addReducer(stub.reducer);
 
         expect(stream.state().updated).to.eq(undefined);
@@ -131,7 +134,8 @@ describe('State Manager', function () {
 
     it('removes a reducer', () => {
 
-        const { stream } = new RiotMeiosis();
+        stub.store = new RiotMeiosis({});
+        const { stream } = stub.store;
 
         const reducer = (state) => {
 
@@ -145,8 +149,6 @@ describe('State Manager', function () {
 
         stream.dispatch({ updated: false });
 
-        const state = stream.state();
-
         expect(stream._reducers.size).to.eq(0);
         expect(stream.state().updated).to.eq(false);
     });
@@ -154,8 +156,8 @@ describe('State Manager', function () {
     it('makes current state the passed value if no modifiers exist', () => {
 
         const check = { blyat: true };
-        stub.stream.dispatch(check);
-        const state = stub.stream.state();
+        stub.store.stream.dispatch(check);
+        const state = stub.store.stream.state();
 
         expect(state).to.eql(check)
     });
@@ -252,22 +254,22 @@ describe('State Manager', function () {
 
     it('goes backward in state', () => {
 
-        stub = new RiotMeiosis({}, {
+        stub.store = new RiotMeiosis({}, {
 
             statesToKeep: 10
         });
 
-        stub.stream.dispatch({ a: 1 });
-        stub.stream.dispatch({ a: 2 });
-        stub.stream.dispatch({ a: 3 });
-        stub.stream.dispatch({ a: 4 });
-        stub.stream.dispatch({ a: 5 });
+        stub.store.stream.dispatch({ a: 1 });
+        stub.store.stream.dispatch({ a: 2 });
+        stub.store.stream.dispatch({ a: 3 });
+        stub.store.stream.dispatch({ a: 4 });
+        stub.store.stream.dispatch({ a: 5 });
 
-        const current = stub.stream.state();
+        const current = stub.store.stream.state();
 
-        stub.stream.prevState();
+        stub.store.stream.prevState();
 
-        const actual = stub.stream.state();
+        const actual = stub.store.stream.state();
 
         expect([current.a, actual.a]).to.eql([5, 4]);
     });
@@ -275,13 +277,13 @@ describe('State Manager', function () {
 
     it('goes forward in state', () => {
 
-        const current = stub.stream.state();
+        const current = stub.store.stream.state();
 
-        stub.stream.prevState();
-        stub.stream.prevState();
-        stub.stream.nextState();
+        stub.store.stream.prevState();
+        stub.store.stream.prevState();
+        stub.store.stream.nextState();
 
-        const actual = stub.stream.state();
+        const actual = stub.store.stream.state();
 
         expect([current.a, actual.a]).to.eql([4, 3]);
     });
@@ -289,13 +291,13 @@ describe('State Manager', function () {
 
     it('resets to current state', () => {
 
-        const current = stub.stream.state();
+        const current = stub.store.stream.state();
 
-        stub.stream.prevState();
-        stub.stream.prevState();
-        stub.stream.resetState();
+        stub.store.stream.prevState();
+        stub.store.stream.prevState();
+        stub.store.stream.resetState();
 
-        const actual = stub.stream.state();
+        const actual = stub.store.stream.state();
 
         expect([current.a, actual.a]).to.eql([3, 5]);
     });

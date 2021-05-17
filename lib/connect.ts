@@ -1,8 +1,8 @@
 import { RiotComponentExport, RiotCoreComponent } from "riot";
 import Manager from './manager';
 
-import { diff } from './utils';
-import { isFunctionOrObject } from './utils/helpers';
+import { deepEqual } from '@riot-tools/state-utils';
+import { isFunctionOrObject } from './helpers';
 
 export interface ConnectFunction {
     (component: RiotComponentExport): RiotComponentExport
@@ -73,9 +73,9 @@ const connect = function (
 
             const change = mapToState(newState, componentState, componentProps);
 
-            const hasDiff = diff(change, componentState);
+            const isEqual = deepEqual(change, componentState);
 
-            if (hasDiff) store.update(change);
+            if (!isEqual) store.update(change);
         };
 
         // Dispatch directly from the component

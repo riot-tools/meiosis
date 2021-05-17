@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-node@v2
       - uses: bahmutov/npm-install@v1
       - run: npx npm-install-peers
-      - run: npm run rollup
+      - run: npm run build
       - run: npm run test
 
   release:
@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-node@v1
       - uses: bahmutov/npm-install@v1
       - run: npx npm-install-peers
-      - run: npm run rollup
+      - run: npm run build
       - run: npm run types
       - run: npx semantic-release
         env:

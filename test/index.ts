@@ -1,17 +1,18 @@
+import { clone } from '@riot-tools/state-utils';
 import { expect } from 'chai';
 
-import RiotMeiosis, { clone } from '..';
+import RiotMeiosis from '../lib';
 
 console.warn = () => {};
 
-const defer = (obj = {}) => {
+const defer: any = (obj: any = {}) => {
 
     obj.p = new Promise((rs, rj) => Object.assign(obj, { rs, rj }));
 
     return obj;
 }
 
-const stub = {
+const stub: any = {
 
     wasMounted: () => {},
     wasUnmounted: () => {},
@@ -67,7 +68,7 @@ describe('Riot Meiosis', function () {
             ...newState
         });
 
-        const meiosis = RiotMeiosis(stub.state);
+        const meiosis = new RiotMeiosis(stub.state);
 
         expect(meiosis).to.include.keys('stream', 'connect', 'dispatch');
 
@@ -138,7 +139,7 @@ describe('Riot Meiosis', function () {
 
         const q = defer();
 
-        let update = false;
+        let update: any = false;
 
         stub.wasUpdated = (change) => {
             update = change;
@@ -178,7 +179,7 @@ describe('Riot Meiosis', function () {
 
         let update = false;
 
-        stub.wasUpdated = (val) => {
+        stub.wasUpdated = () => {
             update = true;
         };
 

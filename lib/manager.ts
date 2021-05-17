@@ -1,12 +1,13 @@
+import { clone } from '@riot-tools/state-utils';
+
 import {
     isUndefined,
     assertFunction,
     definePrivateProperties,
     deepFreeze,
     generateId
-} from './utils/helpers';
+} from './helpers';
 
-import { clone } from './utils';
 
 export type ManagerOptions = {
 

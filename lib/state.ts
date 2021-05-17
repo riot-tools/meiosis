@@ -1,5 +1,5 @@
 import Manager, { ManagerOptions } from './manager';
-import ConnectFactory, { ConnectFunction } from './connect';
+import connectFactory, { ConnectFunction } from './connect';
 
 type AnyState = Object | Array<any> | String | Map<any,any> | Set<any>;
 
@@ -14,7 +14,7 @@ export const createStateStream = (
 
     const stream = new Manager(initialState, options || {});
 
-    const connect = ConnectFactory(stream);
+    const connect = connectFactory(stream);
 
     const dispatch: (value: any) => any = (value) => (
         stream.dispatch(value)
@@ -23,4 +23,21 @@ export const createStateStream = (
     return { stream, connect, dispatch };
 };
 
-export default createStateStream;
+class StateStream {
+
+    stream: Manager = null;
+    connect: ConnectFunction = null;
+    dispatch: (value: any) => any = null;
+
+    constructor(initialState: AnyState, options?: ManagerOptions) {
+
+        this.stream = new Manager(initialState, options || {});
+        this.connect = connectFactory(this.stream);
+        this.dispatch = (value) => (
+            this.stream.dispatch(value)
+        );
+
+    }
+}
+
+export default StateStream;

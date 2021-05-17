@@ -1,34 +1,8 @@
-export const isPrimitive = (val: any): boolean => (
-    val === null ||
-    val === undefined ||
-    val.constructor === String ||
-    val.constructor === Number ||
-    val.constructor === Boolean ||
-    val.constructor === Symbol
-);
-
-export const oneIsPrimative = (value: any, compare: any): boolean => (
-    isPrimitive(value) || isPrimitive(compare)
-);
-
-export const hasSameConstructor = (value: any, compare: any): boolean => (
-    value.constructor === compare.constructor
-);
-
-export const isSameLength = (a: any, b: any): boolean => a.length === b.length;
+import { isNonIterable } from '@riot-tools/state-utils';
 
 export const isFunctionOrObject = (a: Function | Object): boolean => (
     a.constructor === Function ||
     a.constructor === Object
-)
-
-export type AnyContructor = (
-    ArrayConstructor |
-    ObjectConstructor |
-    MapConstructor |
-    SetConstructor |
-    DateConstructor |
-    RegExpConstructor
 );
 
 export const isUndefined = (val: any) => val === undefined;
@@ -75,7 +49,7 @@ export const definePrivateGetters = (target: object, props: object) => {
 
 export const deepFreeze = (target: object) => {
 
-    if (isPrimitive(target)) {
+    if (isNonIterable(target)) {
         return;
     }
 
@@ -88,7 +62,5 @@ export const deepFreeze = (target: object) => {
 };
 
 export const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
-
-
 
 export default {};

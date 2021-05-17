@@ -1,5 +1,5 @@
-export * from './utils';
+export * as utils from './helpers';
 
-import { createStateStream } from './state';
+import StateStream from './state';
 
-export default createStateStream;
+export default StateStream;
