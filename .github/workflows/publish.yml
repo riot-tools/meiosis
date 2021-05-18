@@ -33,7 +33,6 @@ jobs:
       - uses: bahmutov/npm-install@v1
       - run: npx npm-install-peers
       - run: npm run build
-      - run: npm run types
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
