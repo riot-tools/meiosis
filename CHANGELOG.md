@@ -1,3 +1,10 @@
+# [2.0.0-next.5](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.4...v2.0.0-next.5) (2021-05-18)
+
+
+### Bug Fixes
+
+* 🐛 move utils out ([b84666c](https://github.com/riot-tools/meiosis/commit/b84666c0c443af0a433ceaee145e666666a5f87e))
+
 # [2.0.0-next.4](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.3...v2.0.0-next.4) (2021-05-10)
 
 
