@@ -47,7 +47,7 @@
     ]
   },
   "peerDependencies": {
-    "riot": "^5"
+    "riot": ">=5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
