@@ -7,6 +7,7 @@
   "module": "dist/es.js",
   "jsnext:main": "dist/es.js",
   "types": "dist/index.d.ts",
+  "type": "commonjs",
   "files": [
     "dist",
     "readme",
@@ -55,7 +56,7 @@
     "@babel/register": "^7.12.13",
     "@commitlint/cli": "^11",
     "@commitlint/config-conventional": "^11",
-    "@riot-tools/state-utils": "^1.1.0",
+    "@riot-tools/state-utils": "^1.1.1",
     "@riotjs/cli": "^5",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
