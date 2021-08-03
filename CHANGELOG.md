@@ -1,3 +1,10 @@
+# [2.0.0-next.6](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.5...v2.0.0-next.6) (2021-08-03)
+
+
+### Bug Fixes
+
+* 🐛 package json ([4163aec](https://github.com/riot-tools/meiosis/commit/4163aec13718ca10c232778aa07d6e2c7c0e144f))
+
 # [2.0.0-next.5](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.4...v2.0.0-next.5) (2021-05-18)
 
 
