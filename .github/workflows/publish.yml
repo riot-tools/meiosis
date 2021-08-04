@@ -19,6 +19,7 @@ jobs:
         with:
           node-version: 14
       - uses: bahmutov/npm-install@v1
+      - run: npm ci --no-optional
       - run: npx npm-install-peers
       - run: npm run build
       - run: npm run test
