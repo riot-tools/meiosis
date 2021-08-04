@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 14
-      - run: npm install
+      - run: npm install --no-optional
       - run: npm run build
       - run: npm run test
         env:
@@ -33,7 +33,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 14
-      - run: npm install
+      - run: npm install --no-optional
       - run: npm run build
       - run: npx semantic-release
         env:
