@@ -1,11 +1,11 @@
-import { RiotComponentExport, RiotCoreComponent } from "riot";
+import { RiotComponent } from "riot";
 import Manager from './manager';
 
 import { deepEqual } from '@riot-tools/state-utils';
 import { isFunctionOrObject } from './helpers';
 
 export interface ConnectFunction {
-    (component: RiotComponentExport): RiotComponentExport
+    (component: RiotComponent): RiotComponent
 };
 
 interface ConnectInternalListener {
@@ -13,13 +13,18 @@ interface ConnectInternalListener {
 }
 
 type ConnectInternalStore = {
-    update: null | RiotCoreComponent['update'];
+    update: null | RiotComponent['update'];
     componentState: null | Object
     componentProps: null | Object;
-    onBeforeMount: null | RiotComponentExport['onBeforeMount']
-    onBeforeUnmount: null | RiotComponentExport['onBeforeUnmount'];
-    onUpdated: null | RiotComponentExport['onUpdated'];
+    onBeforeMount: null | RiotComponent['onBeforeMount']
+    onBeforeUnmount: null | RiotComponent['onBeforeUnmount'];
+    onUpdated: null | RiotComponent['onUpdated'];
     listener?: ConnectInternalListener;
+};
+
+interface RiotMeiosisComponent extends RiotComponent {
+
+    dispatch: (value: any) => any
 }
 
 
@@ -55,7 +60,7 @@ const connect = function (
      * Only updates component whenever there is a change to state.
      * @param {object} component - Riot component
      */
-    return function (component: RiotComponentExport) {
+    return function (component: RiotMeiosisComponent) {
 
         const store: ConnectInternalStore = {
             update: null,
