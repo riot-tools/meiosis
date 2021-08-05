@@ -1,3 +1,26 @@
+# [2.0.0-next.7](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.6...v2.0.0-next.7) (2021-08-05)
+
+
+### Bug Fixes
+
+* 🐛 peer dep ([5915c95](https://github.com/riot-tools/meiosis/commit/5915c958164a70a6ff1a0d45b17c6ece875abdfb))
+* 🐛 version, actions ([3b62de4](https://github.com/riot-tools/meiosis/commit/3b62de48d6e91d9a90d845f39514898aab594225))
+* gh actions ([cdd93ad](https://github.com/riot-tools/meiosis/commit/cdd93ad2e94468da2d7088da189e794d9e809b52))
+* gh actions ([743355a](https://github.com/riot-tools/meiosis/commit/743355a21686d89950344eadd62c15a145dbba09))
+* gh actions ([d8460c4](https://github.com/riot-tools/meiosis/commit/d8460c420b594c940b897b1ff93c1a507de2db98))
+* gh actions ([fa6dfab](https://github.com/riot-tools/meiosis/commit/fa6dfab2e05ef27fb1432b9f096a4fa86d2f2519))
+* gh actions ([2280653](https://github.com/riot-tools/meiosis/commit/22806536f4d80ea82e426a310e73a86d36ba881a))
+
+
+### Features
+
+* 🎸 riot 6 only ([a7ca9ea](https://github.com/riot-tools/meiosis/commit/a7ca9ea18d90048f868229b412787efec64c477e))
+
+
+### BREAKING CHANGES
+
+* 🧨 Riot 6 only support with TypeScript
+
 # [2.0.0-next.6](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.5...v2.0.0-next.6) (2021-08-03)
 
 
