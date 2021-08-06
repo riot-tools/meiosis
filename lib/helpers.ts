@@ -1,4 +1,4 @@
-import { isNonIterable } from '@riot-tools/state-utils';
+import * as StateUtils from '@riot-tools/state-utils';
 
 export const isFunctionOrObject = (a: Function | Object): boolean => (
     a.constructor === Function ||
@@ -49,7 +49,7 @@ export const definePrivateGetters = (target: object, props: object) => {
 
 export const deepFreeze = (target: object) => {
 
-    if (isNonIterable(target)) {
+    if (StateUtils.isNonIterable(target)) {
         return;
     }
 

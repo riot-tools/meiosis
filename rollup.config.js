@@ -5,6 +5,10 @@ import del from 'rollup-plugin-delete';
 import pkg from './package.json';
 import tsconfig from './tsconfig.json';
 
+const globals = {
+    '@riot-tools/state-utils': 'RiotStateUtils'
+};
+
 export default [
     {
         input: 'lib/index.ts',
@@ -23,17 +27,11 @@ export default [
         output: [
             {
                 name: 'RiotMeiosis',
-                file: pkg.main,
-                format: 'umd',
-                sourcemap: true,
-                inlineDynamicImports: true,
-            },
-            {
-                name: 'RiotMeiosis',
-                file: pkg.browser,
+                file: 'dist/iife.js',
                 format: 'iife',
                 sourcemap: true,
                 inlineDynamicImports: true,
+                globals
             },
             {
                 file: pkg.module,
