@@ -15,7 +15,7 @@
   "scripts": {
     "build": "rollup -c",
     "test": "mocha -r ./test/_setup -r ts-node/register 'test/**/*.ts'",
-    "preview": "yarn rollup && npx http-server"
+    "preview": "parcel index.html --open"
   },
   "repository": {
     "type": "git",
@@ -58,6 +58,10 @@
     "@commitlint/config-conventional": "^11",
     "@riot-tools/state-utils": "^1.x.x",
     "@riotjs/cli": "^5",
+    "@riotjs/compiler": "^6.0.3",
+    "@riotjs/hot-reload": "^6.0.0",
+    "@riotjs/parcel-plugin-riot": "^6.0.0",
+    "@riotjs/register": "^5.0.0",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
     "@types/mocha": "^8.2.2",
@@ -68,6 +72,7 @@
     "husky": "^4",
     "jsdom": "^16.5.3",
     "mocha": "^6.1.4",
+    "parcel-bundler": "^1.12.5",
     "riot": "^6.x.x",
     "rollup": "^2",
     "rollup-plugin-delete": "^2.0.0",

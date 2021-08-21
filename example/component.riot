@@ -15,13 +15,28 @@
 
     <h3>Items in state:</h3>
     <li each={ (item, i) in state.items }>
-        <input type="checkbox" checked={ item.checked } onchange={ setChecked(i) } }>
+        <input type="checkbox" checked={ item.checked } onchange={ setChecked(i, item) } }>
         { item.text }
     </li>
 
-    <p>Edit the items in RMDevTools so you can see how it works!</p>
+    <pre>
+        {
+            [
+                '########## Component State ##########',
+                '',
+                JSON.stringify(state, null, 4),
+                '',
+                '#####################################',
+
+            ].join('\n')
+        }
+    </pre>
 
     <script>
+
+        import { connect, dispatch } from './state';
+        import { clone } from '@riot-tools/state-utils';
+
 
         const mapToState = (appState, ownState) => ({
             ...ownState,
@@ -31,18 +46,19 @@
         const component = {
             state: { loading: false },
             setLoading (loading) { this.update({ loading }) },
-            setChecked(i) {
+            setChecked(i, item) {
 
                 const self = this;
-                const items = RiotMeiosis.clone(this.state.items);
 
                 return (e) => {
 
                     e.preventDefault();
 
-                    items[i].checked = e.target.checked;
+                    const items = clone(self.state.items);
 
-                    update({ items });
+                    items[i].checked = e.target.checked === true;
+
+                    dispatch({ items });
                 }
             }
         }
