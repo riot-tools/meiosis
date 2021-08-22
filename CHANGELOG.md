@@ -1,3 +1,11 @@
+# [2.0.0-next.8](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.7...v2.0.0-next.8) (2021-08-22)
+
+
+### Bug Fixes
+
+* 🐛 bad es config ([ae7e628](https://github.com/riot-tools/meiosis/commit/ae7e62873f2f9ca2e4671ea69ae3564e22719519))
+* 🐛 renames, stable tsconf, readme ([17b434e](https://github.com/riot-tools/meiosis/commit/17b434e718ecd5c563403f2e07f94f4e6d397721))
+
 # [2.0.0-next.7](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.6...v2.0.0-next.7) (2021-08-05)
 
 
