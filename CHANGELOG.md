@@ -1,3 +1,30 @@
+# [2.0.0](https://github.com/riot-tools/meiosis/compare/v1.2.0...v2.0.0) (2021-08-22)
+
+
+### Features
+
+* 🎸 v2 rewrite ([e44ddf0](https://github.com/riot-tools/meiosis/commit/e44ddf0bf7db9c7c7d46ac823bf4f9e3d52122b8)), closes [#6](https://github.com/riot-tools/meiosis/issues/6)
+* Merge pull request [#14](https://github.com/riot-tools/meiosis/issues/14) from riot-tools/next ([50ba3fe](https://github.com/riot-tools/meiosis/commit/50ba3fefbaf34977008cd74dab3f2f52a39fb939))
+
+
+### BREAKING CHANGES
+
+* 🧨 no more getState, getStream. connect functions no longer. Now requires
+instantiation via `new` constructor.
+
+feat: 🎸 2 two clone updates
+
+Bidirectional updates among clones. All tests passing. Added
+`goToState(sid: number)`, but needs tests. Add github actions.
+* 🧨 Riot 6 only support with TypeScript
+
+chore: 🤖 example preview with parcel
+
+refactor: 🐛 renames, stable tsconf, readme
+
+Renamed some classes so they are more semantic. Instatiated via class;
+no more function. Stable tsconfig and mocha tests using ts.
+
 # [2.0.0-next.7](https://github.com/riot-tools/meiosis/compare/v2.0.0-next.6...v2.0.0-next.7) (2021-08-05)
 
 
