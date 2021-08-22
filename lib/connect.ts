@@ -1,5 +1,32 @@
-import diff from 'deep-diff';
-import { getState, getStream } from './state';
+import { RiotComponent } from "riot";
+import StateManager from './manager';
+
+import { deepEqual } from '@riot-tools/state-utils';
+import { isFunctionOrObject } from './helpers';
+
+export interface ConnectFunction {
+    (component: RiotComponent): RiotComponent
+};
+
+interface ConnectInternalListener {
+    (newState: Object): any
+}
+
+type ConnectInternalStore = {
+    update: null | RiotComponent['update'];
+    componentState: null | Object
+    componentProps: null | Object;
+    onBeforeMount: null | RiotComponent['onBeforeMount']
+    onBeforeUnmount: null | RiotComponent['onBeforeUnmount'];
+    onUpdated: null | RiotComponent['onUpdated'];
+    listener?: ConnectInternalListener;
+};
+
+interface RiotMeiosisComponent extends RiotComponent {
+
+    dispatch: (value: any) => any
+}
+
 
 /**
  * Decorator for implement state management on a Riot component.
@@ -10,36 +37,39 @@ import { getState, getStream } from './state';
  * @param {function} mapToState - Required. Function to reduce application state to relevant app state
  * @param {function|object} mapToComponent - Optional. Map a function or object onto a component.
  */
-export default function (mapToState, mapToComponent) {
+const connect = function (
+    mapToState: Function,
+    mapToComponent: Function | Object
+): ConnectFunction {
 
     if (!mapToState || mapToState.constructor !== Function) {
 
         throw TypeError('mapToState must be a function');
     }
 
-    if (mapToComponent && ![Function, Object].includes(mapToComponent.constructor)) {
+    if (mapToComponent && !isFunctionOrObject(mapToComponent)) {
 
         throw TypeError('mapToComponent must be a function or object');
     }
 
+    /** Manager is bound to lexical this */
+    const connection: StateManager = this;
 
     /**
      * Connects a riot component to global app state.
      * Only updates component whenever there is a change to state.
      * @param {object} component - Riot component
      */
-    return function (component) {
+    return function (component: RiotMeiosisComponent) {
 
-        const store = {
+        const store: ConnectInternalStore = {
             update: null,
             componentState: null,
             componentProps: null,
-            onBeforeMount: component.onBeforeMount,
-            onBeforeUnmount: component.onBeforeUnmount,
-            onUpdated: component.onUpdated
+            onBeforeMount: component.onBeforeMount || null,
+            onBeforeUnmount: component.onBeforeUnmount || null,
+            onUpdated: component.onUpdated || null
         };
-
-        const stream = getStream();
 
         // Should only call update if state has changed
         store.listener = (newState) => {
@@ -48,19 +78,22 @@ export default function (mapToState, mapToComponent) {
 
             const change = mapToState(newState, componentState, componentProps);
 
-            const hasDiff = diff(change, componentState);
+            const isEqual = deepEqual(change, componentState);
 
-            if (hasDiff) store.update(change);
+            if (!isEqual) store.update(change);
         };
+
+        // Dispatch directly from the component
+        component.dispatch = (value: any) => connection.dispatch(value);
 
         // Merge global state to local state.
         // Global state supersedes local state.
-        component.onBeforeMount = function (props, state = {}) {
+        component.onBeforeMount = function (props: Object, state = {}) {
 
-            store.update = (...args) => this.update.apply(this, args);
+            store.update = (...args: any[]) => this.update.apply(this, args);
 
             // When state is updated, update component state.
-            stream.on.value(store.listener);
+            connection.addListener(store.listener);
 
 
             if (store.onBeforeMount) {
@@ -69,7 +102,7 @@ export default function (mapToState, mapToComponent) {
 
             state = { ...state, ...this.state };
 
-            this.state = mapToState(getState(), state, props);
+            this.state = mapToState(connection.state(), state, props);
             store.componentState = this.state;
             store.componentProps = props;
 
@@ -90,7 +123,7 @@ export default function (mapToState, mapToComponent) {
         };
 
         // Capture the new state to avoid hoisting issues
-        component.onUpdated = function (props, state) {
+        component.onUpdated = function (props: Object, state: Object) {
 
             let retrn = true;
             if (store.onUpdated) {
@@ -104,25 +137,27 @@ export default function (mapToState, mapToComponent) {
 
         // wrap the onUnmounted callback to end the cloned stream
         // when the component will be unmounted
-        component.onBeforeUnmount = function (...args) {
-
+        component.onBeforeUnmount = function (...args: any[]) {
 
             if (store.onBeforeUnmount) {
                 store.onBeforeUnmount.apply(this, args);
             }
 
             if (store.listener) {
-                try {
-                    stream.off.value(store.listener);
-                }
-                catch (e) {
-                    if (!/Couldn\'t remove handler passed by reference/.test(e.message)) {
-                        throw e;
-                    }
-                }
+                connection.removeListener(store.listener);
             }
         };
 
         return component;
     };
 };
+
+
+export const connectFactory = function (
+    stateStream: StateManager
+): ConnectFunction {
+
+    return connect.bind(stateStream);
+};
+
+export default connectFactory;

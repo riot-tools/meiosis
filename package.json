@@ -1,26 +1,27 @@
 {
-  "name": "riot-meiosis",
-  "version": "1.2.0",
-  "description": "Meiosis state manager for Riot using Erre",
+  "name": "@riot-tools/meiosis",
+  "version": "2.0.0-next.7",
+  "description": "Dependency free state manager for Riot inspired by Meiosis pattern",
   "main": "dist/umd.js",
-  "module": "dist/cjs.js",
-  "jsnext:main": "dist/es.js",
+  "module": "dist/es.js",
+  "browser": "dist/iife.js",
+  "typings": "dist/types/index.d.ts",
   "files": [
-    "dist/umd.js",
-    "dist/cjs.js",
-    "dist/es.js",
-    "readme.md",
-    "screenshots"
+    "dist",
+    "readme"
   ],
   "scripts": {
-    "start": "make watch"
+    "build": "rollup -c",
+    "test": "mocha -r esm -r ./test/_setup.js -r ts-node/register 'test/**/*.ts'",
+    "preview": "parcel index.html --open"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:damusix/riot-meiosis.git"
+    "url": "git@github.com:riot-tools/meiosis.git"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "keywords": [
     "riot",
@@ -34,13 +35,19 @@
   "author": "Danilo Alonso",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/damusix/riot-meiosis/issues"
+    "url": "https://github.com/riot-tools/meiosis/issues"
   },
-  "homepage": "https://github.com/damusix/riot-meiosis#readme",
+  "homepage": "https://github.com/riot-tools/meiosis#readme",
   "babel": {
     "presets": [
       "@babel/preset-env"
     ]
+  },
+  "peerDependencies": {
+    "riot": "^6.x.x"
+  },
+  "dependencies": {
+    "@riot-tools/state-utils": "^1.x.x"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -49,23 +56,31 @@
     "@babel/register": "^7.12.13",
     "@commitlint/cli": "^11",
     "@commitlint/config-conventional": "^11",
+    "@riot-tools/state-utils": "^1.x.x",
     "@riotjs/cli": "^5",
-    "@rollup/plugin-commonjs": "^17.1.0",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^11.1.1",
+    "@riotjs/compiler": "^6.0.3",
+    "@riotjs/hot-reload": "^6.0.0",
+    "@riotjs/parcel-plugin-riot": "^6.0.0",
+    "@riotjs/register": "^5.0.0",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^15.3.0",
     "chai": "^4",
     "cz-conventional-changelog": "^3",
-    "deep-diff": "^1.0.2",
-    "erre": "^2.2.0",
+    "fast-check": "^2.12.1",
     "husky": "^4",
-    "lodash.clonedeep": "^4.5.0",
+    "jsdom": "^16.5.3",
     "mocha": "^6.1.4",
-    "rollup": "^2.38.2",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "semantic-release": "^17"
+    "parcel-bundler": "^1.12.5",
+    "riot": "^6.x.x",
+    "rollup": "^2",
+    "rollup-plugin-delete": "^2.0.0",
+    "rollup-plugin-terser": "^7",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "semantic-release": "^17",
+    "ts-node": "^9.1.1",
+    "typescript": "^4"
   },
   "commitlint": {
     "extends": [

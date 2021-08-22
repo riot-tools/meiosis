@@ -1,88 +1,97 @@
 
-# Riot Meiosis
+# Riot Meiosis <!-- omit in toc -->
 
-Meiosis state manager for Riot using Erre. [Learn more about meiosis](http://RiotMeiosis.js.org).
+<a href="https://riot-tools.github.io/meiosis/getting-started"><h2>Full documentation can be found here</h2></a>
 
-- [Riot Meiosis](#riot-meiosis)
-  - [Usage](#usage)
-  - [API](#api)
-    - [`createStream(reducer, initialState)`](#createstreamreducer-initialstate)
-    - [`connect(mapToState, mapToComponent)(MyComponent)`](#connectmaptostate-maptocomponentmycomponent)
-    - [`update(newState)`](#updatenewstate)
-    - [`getState()`](#getstate)
-    - [`getStream()`](#getstream)
-  - [RM Dev Tools](#rm-dev-tools)
-
-Key things to note:
-- Implements a stream to update state
-- Comes with a `connect` function to wrap stream functionality
-- Components attempt to update when stream is pushed to
-- Prevent component updates if state has not changed
-- Stream listeners are destroyed when `onBeforeUnmount`
-
-## Usage
-
-```
-npm i --save riot-meiosis
+```sh
+npm i --save @riot-tools/meiosis
 ```
 
-```js
-import {
-    connect,
-    getState,
-    createStream,
-    getStream,
-} from 'riot-meiosis';
+---
 
-// Set your initial state.
-// State is only mutable via manager API.
+## `./appState.js`
+
+```ts
+import { RiotMeiosis } from '@riot-tools/meiosis';
+
+// can be an object
 const state = {
     initial: true,
     isNew: true,
     mutable: false,
     nested: {
-        hasCandy: true
+        hasPasta: true
     }
 };
 
-// Root state reducer
-const reducer = (newState, oldState) => ({
+// can be a map
+const state = new Map([
+
+    ['init', true],
+    ['mutable', true],
+    ['nested', {
+        hasPasta: true
+    }]
+])
+
+// merge the states when object
+const reducer = (newState: object, oldState: object) => ({
     ...oldState,
     ...newState
 });
 
-// Create global application stream (can only run once)
-const stream = createStream(reducer, stub.state);
+// merge the states when map
+const reducer = (newState: object, oldState: Map) => {
 
-// stream is simply an Erre stream
-stream.push({
+    for (const [key, value] of Object.entries(newState)) {
+
+        oldState.set(key, value);
+    }
+
+    return oldState;
+}
+
+const stateManager = new RiotMeiosis(state);
+
+// Extract the state stream
+const { stream } = stateManager;
+
+// Add your state reducer
+stream.addReducer(reducer);
+
+
+
+// send updated
+stream.dispatch({
     initial: false,
     isNew: false
 });
 
 // Gets an immutable clone of the current state
-console.log(getState());
+console.log(stream.state());
 // > {
 //     initial: false,
 //     isNew: false,
 //     mutable: false,
 //     nested: {
-//         hasCandy: true
+//         hasPasta: true
 //     }
 // }
 
+export default stateManager;
 ```
 
-In your `.riot` files:
+## `mycomponent.riot`
+
 ```html
 
 <myComponent>
 
-    <p if={ hasCandy }>I have candy!</p>
+    <p if={ hasPasta }>I have pasta!</p>
 
     <script>
 
-        import { connect } from 'riot-meiosis';
+        import { connect } from './appState';
         import myActions from './actions';
 
         const mapToState = (appState, ownState, ownProps) => ({
@@ -103,6 +112,12 @@ In your `.riot` files:
                 this.state = {
                     lala: true
                 }
+            },
+
+            onMounted() {
+
+                // Component will have access to dispatch from lexical this
+                this.dispatch({ myComponentMounted: true });
             }
         }
 
@@ -113,119 +128,97 @@ In your `.riot` files:
 </myComponent>
 ```
 
-## API
+## Have many state managers
 
-```js
-const {
-    createStream,
-    connect,
-    update,
-    getState,
-    getStream,
-    utils
-} = 'riot-meiosis';
+```ts
+
+const stateManager1 = new RiotMeiosis(state1);
+const stateManager2 = new RiotMeiosis(state2);
+
+stateManager1.dispatch({ weee: true });
+stateManager2.dispatch({ wooo: true });
+
 ```
 
+## You do wierd things
 
-### `createStream(reducer, initialState)`
-
-Simply put, this function returns an [Erre stream](https://github.com/GianlucaGuarini/erre#api) and sets your global application state. Both `stream` and `state` are only ever defined once, so you cannot run this function twice.
-
-Both `reducer()` and `initialState` are required. You can set `initialState` to anything except `null` or `undefined`.
-
-* `reducer` *function, required* - Reducer that transforms incoming payloads into global state
-* `initialState` *any, required* - Initial app state. Can be set to anything except `null` or `undefined`.
+```ts
+const state = {
+    // ...
+};
 
 
-### `connect(mapToState, mapToComponent)(MyComponent)`
+const genericReducer = (newState: object, oldState: object, ignore: Symbol) => {
 
-Decorator for implement state management on a Riot component. Application state is mapped to Component state, stream updates generate component updates only when there are changes to the relevant state, and component cleans up and  stops listening to state changes `onBeforeUnmount`.
+    if (newState.$set) {
+        return ignore;
+    }
 
-* `mapToState(appState, ownState, ownProps)` *function, required* - Function to reduce application state to relevant app state
-* `mapToComponent`: Optional
-    - *object* - Map an object to component
-    - *function* - `(ownProps, ownState) => ({})` - Map a function's return value to component. Receives component props and state. Should return an object.
+    return {
+        ...oldState,
+        ...newState
+    }
+};
 
-**Returns**
+const setterReducer = (newState: object, oldState: object, ignore: Symbol) => {
 
-Function to pass your component into. The result value is used to `export default` inside your Riot component and have a component that is conditionally connected to global state.
+    if (!newState.$set) {
+        return ignore;
+    }
 
-### `update(newState)`
+    lodash.set(oldState, newState.$set, newState.$update);
 
-Pushes an update through your reducer. This is a helper for `getStream().push(newState)`
+    return oldState;
+};
 
+const stateManager = new RiotMeiosis(state);
 
-### `getState()`
+stateManager.addReducer(genericReducer, setterReducer);
 
-Returns the application state.
+stateManager.dispatch({
 
-
-### `getStream()`
-
-Returns the application state stream.
-
-
-## RM Dev Tools
-
-Riot Meiosis comes with a dev tool to be able to look into your state and manipulate it directly.
-
-![](screenshots/rmdevtools.gif)
-
-
-In your `app.js`
-```js
-import { register, component } from 'riot';
-import { getStream, connect, RMDevTools } from 'riot-meiosis';
-
-// You must pass it connect and getStream in order
-// for it to return a mountable riot component
-register('rmdevtools', RMDevTools({ getStream, connect }))
-```
-
-In your `app.riot` or `index.html`
-```html
-<html>
-    ...
-    <footer></footer>
-
-    <rmdevtools></rmdevtools>
-</html>
+    $set: 'some.nested.value',
+    $update: {
+        name: 'pepe',
+        email: 'pepe@popo.pi'
+    }
+});
 
 ```
 
 
-If you're using riot in browser compile mode and place this in your `index.html`, you need to register and mount it on your compile callback:
+## Go back in time
 
-```html
+```ts
 
-<rmdevtools></rmdevtools>
+const stateManager = new RiotMeiosis(state, { statesToKeep: 20 });
 
-<script>
-    (async function main() {
-        await riot.compile();
+stateManager.dispatch({ ... });
+stateManager.dispatch({ ... });
+stateManager.dispatch({ ... });
+stateManager.dispatch({ ... });
+stateManager.dispatch({ ... });
+stateManager.dispatch({ ... });
 
-        riot.mount('samplecomponent');
-
-        await riot.register(
-            'rmdevtools',
-            RiotMeiosis.RMDevTools(RiotMeiosis)
-        );
-
-        riot.mount('rmdevtools');
-
-        }())
-</script>
-
+// Sends update to all listeners
+stateManager.prevState();
+stateManager.nextState();
+stateManager.goToState(2);
+stateManager.resetState();
 ```
 
-> ### NOTE:
-> `rmdevtools` by default has a 3 second debounce for pushing updates when in autoSave mode.
-> This can be modified by adding `debounce=""` attribute to whatever you want it to be.
-> ``` html
-> <rmdevtools debounce="1000"></rmdevtools>
-> ```
-> Or if you want to disable it complete:
-> ``` html
-> <rmdevtools debounce="0"></rmdevtools>
-> ```
-> This is done to prevent blasting the stream with updates when typing, or doing modifying a large number of items, which can lead to performance issues if you're iterating over large collections or lists.
+## Listen for incoming changes
+
+```ts
+
+const stateSpy = (newState, oldState) => {
+
+    console.log(newState);
+};
+
+stateManager.addListener(stateSpy);
+```
+
+---
+
+<a href="https://riot-tools.github.io/meiosis/getting-started"><h2>Full documentation can be found here</h2></a>

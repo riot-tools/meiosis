@@ -6,60 +6,15 @@
     <title>Riot Meiosis Example</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+    <link rel="stylesheet" href="https://rawcdn.githack.com/c-mart/dark-tango-skeleton/f33e434b049f08fe64fc6e9204c16c622b834d72/dark-tango-skeleton.css">
 </head>
 <body>
 
     <samplecomponent></samplecomponent>
-    <rmdevtools debounce="0"></rmdevtools>
 
     <hr />
-    <button onclick="clickme()">I am not inside a riot component, but click me!</button>
+    <button class="button" onclick="clickme()">I am not inside a riot component, but click me!</button>
 
-    <script src="./example/component.riot" type="riot"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/5.2.0/riot+compiler.min.js"></script>
-
-    <script src="./dist/umd.js"></script>
-
-    <script>
-        const state = {
-            buttonclicked: 0,
-            someInput: '',
-            items: [
-                { text: 'try riot meioses', checked: true },
-                { text: 'try rmdevtools', checked: false }
-            ]
-        };
-
-
-        const reducer = (newState, oldState) => ({
-            ...oldState,
-            ...newState
-        });
-
-        RiotMeiosis.createStream(reducer, state);
-
-        window.clickme = () => {
-
-            const { buttonclicked } = RiotMeiosis.getState();
-
-            RiotMeiosis.update({ buttonclicked: buttonclicked+1 })
-        }
-
-        (async function main() {
-            await riot.compile();
-
-            riot.mount('samplecomponent');
-
-            await riot.register(
-                'rmdevtools',
-                RiotMeiosis.RMDevTools(RiotMeiosis)
-            );
-
-            riot.mount('rmdevtools');
-
-          }())
-
-    </script>
+    <script src="./example/index.js"></script>
 </body>
 </html>
