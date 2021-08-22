@@ -1,7 +1,7 @@
 import { clone } from '@riot-tools/state-utils';
 import { expect } from 'chai';
 
-import RiotMeiosis from '../lib';
+import { RiotMeiosis } from '../lib';
 
 console.warn = () => {};
 

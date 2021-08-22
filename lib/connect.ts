@@ -1,5 +1,5 @@
 import { RiotComponent } from "riot";
-import Manager from './manager';
+import StateManager from './manager';
 
 import { deepEqual } from '@riot-tools/state-utils';
 import { isFunctionOrObject } from './helpers';
@@ -53,7 +53,7 @@ const connect = function (
     }
 
     /** Manager is bound to lexical this */
-    const connection: Manager = this;
+    const connection: StateManager = this;
 
     /**
      * Connects a riot component to global app state.
@@ -154,7 +154,7 @@ const connect = function (
 
 
 export const connectFactory = function (
-    stateStream: Manager
+    stateStream: StateManager
 ): ConnectFunction {
 
     return connect.bind(stateStream);

@@ -9,7 +9,7 @@ import {
 } from './helpers';
 
 
-export type ManagerOptions = {
+export type StateManagerOptions = {
 
     /** How many states changes to keep in memory */
     statesToKeep?: number;
@@ -18,13 +18,13 @@ export type ManagerOptions = {
     flushOnRead?: boolean;
 
     /** Parent stream */
-    parent?: Manager;
+    parent?: StateManager;
 
     /** Child stream should update parent stream */
     bidirectional?: boolean;
 };
 
-export type ManagerState = {
+export type StateManagerState = {
 
     state?: any;
     currentState?: number|null;
@@ -38,13 +38,13 @@ export type ReducerFunction = (value: any, state?: any, ignore?: symbol) => any
 // For skipping state modification
 const IGNORE = Symbol();
 
-const DEFAULT_OPTIONS: ManagerOptions = {
+const DEFAULT_OPTIONS: StateManagerOptions = {
     statesToKeep: 5
 };
 
-export class Manager {
+export class StateManager {
 
-    _options: ManagerOptions|null = null;
+    _options: StateManagerOptions|null = null;
 
     private _id: number|null = null;
     private _sid = 0;
@@ -53,15 +53,15 @@ export class Manager {
         return this._sid++;
     }
 
-    _internals: ManagerState;
+    _internals: StateManagerState;
     _states: Map<number, any>|null = null;
 
     _reducers: Set<ReducerFunction>|null = null;
     _listeners: Set<Function>|null = null;
 
-    _parent: Manager|null = null;
+    _parent: StateManager|null = null;
 
-    constructor(initialState: any = {}, options: ManagerOptions = {}) {
+    constructor(initialState: any = {}, options: StateManagerOptions = {}) {
 
         definePrivateProperties(this, {
 
@@ -88,7 +88,7 @@ export class Manager {
         this._addState(initialState);
     }
 
-    private _setInternals(updates: ManagerState) {
+    private _setInternals(updates: StateManagerState) {
 
         this._internals = {
             ...this._internals,
@@ -121,7 +121,7 @@ export class Manager {
         });
     }
 
-    private _notifyListeners(newState: any, oldState: any, flow?: Manager[]) {
+    private _notifyListeners(newState: any, oldState: any, flow?: StateManager[]) {
 
         // Notify listeners
         for (const listener of this._listeners) {
@@ -134,7 +134,7 @@ export class Manager {
      * @param value New state
      * @param {Array} flow This can be ignored. Tracks flow of incoming updates to prevent double updates on clones.
      */
-    dispatch(value: any, flow?: Manager[]) {
+    dispatch(value: any, flow?: StateManager[]) {
 
         /**
          * If the update is coming back to itself, do not update.
@@ -203,7 +203,7 @@ export class Manager {
      * Adds a function that modifies the dispatched state before registering it as a new state item.
      * You can add as many of these as you want.
      * @param {function} fn
-     * @returns {Manager} manager instance
+     * @returns {StateManager} manager instance
      */
     addReducer(...fns: ReducerFunction[]){
 
@@ -223,7 +223,7 @@ export class Manager {
      * Removes reducers from the state stream.
      * They will not longer modify the state once they are removed.
      * @param {function} fn
-     * @returns {Manager} manager instance
+     * @returns {StateManager} manager instance
      */
     removeReducer(...fns: ReducerFunction[]) {
 
@@ -242,7 +242,7 @@ export class Manager {
     /**
      * Adds a listener that runs when updates are dispatched
      * @param {function} fns
-     * @returns {Manager} manager instance
+     * @returns {StateManager} manager instance
      */
     addListener(...fns: Function[]) {
 
@@ -260,7 +260,7 @@ export class Manager {
     /**
      * Removes any attached listeners
      * @param {function} func
-     * @returns {Manager} manager instance
+     * @returns {StateManager} manager instance
      */
     removeListener(...fns: Function[]) {
 
@@ -400,13 +400,13 @@ export class Manager {
      * and will update whever parent is updated. Adding reducers and
      * listeners will not affect parent manager instance.
      *
-     * @param {ManagerOptions} options
+     * @param {StateManagerOptions} options
      *
-     * @returns {Manager} manager instance
+     * @returns {StateManager} manager instance
      */
-    clone(options: ManagerOptions = {}) {
+    clone(options: StateManagerOptions = {}) {
 
-        return new Manager(
+        return new StateManager(
             this.state(),
             {
                 ...this._options,
@@ -433,7 +433,7 @@ export class Manager {
         /**
          * Add listener to parent to pass updates to cloned instance
          */
-        const updateChild = (value: any, _: any, flow?: Manager[]) => {
+        const updateChild = (value: any, _: any, flow?: StateManager[]) => {
 
             if (flow) {
                 flow.push(self);
@@ -456,7 +456,7 @@ export class Manager {
              * child in order to prevent maximum call stack.
              * @param value
              */
-            const updateParent = (value: any, _: any, flow?: Manager[]) => {
+            const updateParent = (value: any, _: any, flow?: StateManager[]) => {
 
                 if (flow) {
                     flow.push(self);
@@ -472,4 +472,4 @@ export class Manager {
     }
 }
 
-export default Manager;
+export default StateManager;

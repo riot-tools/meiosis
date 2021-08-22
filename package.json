@@ -2,19 +2,17 @@
   "name": "@riot-tools/meiosis",
   "version": "2.0.0-next.7",
   "description": "Dependency free state manager for Riot inspired by Meiosis pattern",
-  "main": "dist/es.js",
+  "main": "dist/umd.js",
   "module": "dist/es.js",
-  "jsnext:main": "dist/es.js",
-  "types": "dist/index.d.ts",
-  "type": "module",
+  "browser": "dist/iife.js",
+  "typings": "dist/types/index.d.ts",
   "files": [
     "dist",
-    "readme",
-    "screenshots"
+    "readme"
   ],
   "scripts": {
     "build": "rollup -c",
-    "test": "mocha -r ./test/_setup -r ts-node/register 'test/**/*.ts'",
+    "test": "mocha -r esm -r ./test/_setup.js -r ts-node/register 'test/**/*.ts'",
     "preview": "parcel index.html --open"
   },
   "repository": {
@@ -46,8 +44,10 @@
     ]
   },
   "peerDependencies": {
-    "@riot-tools/state-utils": "^1.x.x",
     "riot": "^6.x.x"
+  },
+  "dependencies": {
+    "@riot-tools/state-utils": "^1.x.x"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

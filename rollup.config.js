@@ -3,11 +3,12 @@ import typescript from 'rollup-plugin-typescript2';
 import del from 'rollup-plugin-delete';
 
 import pkg from './package.json';
-import tsconfig from './tsconfig.json';
 
 const globals = {
     '@riot-tools/state-utils': 'RiotStateUtils'
 };
+
+const libraryName = 'RiotMeiosis';
 
 export default [
     {
@@ -16,18 +17,14 @@ export default [
 
             del({ targets: 'dist/*' }),
 
-            typescript({
-                typescript: require('typescript'),
-                tsconfig: 'tsconfig.json',
-                tsconfigOverride: tsconfig
-            }),
+            typescript({ useTsconfigDeclarationDir: true }),
 
             terser(),
         ],
         output: [
             {
-                name: 'RiotMeiosis',
-                file: 'dist/iife.js',
+                name: libraryName,
+                file: pkg.browser,
                 format: 'iife',
                 sourcemap: true,
                 inlineDynamicImports: true,
@@ -36,6 +33,12 @@ export default [
             {
                 file: pkg.module,
                 format: 'es',
+                sourcemap: true
+            },
+            {
+                file: pkg.main,
+                name: libraryName,
+                format: 'umd',
                 sourcemap: true
             }
         ],

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import RiotMeiosis from '../lib';
+import { RiotMeiosis } from '../lib';
 
 
 const stub: any = {

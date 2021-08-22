@@ -2,10 +2,7 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "lib": [
-            "es6",
-            "DOM"
-        ],
+        "lib": ["es2015", "es2016", "es2017", "dom"],
         "module": "esnext",
         "moduleResolution": "node",
         "noEmitOnError": false,
@@ -14,13 +11,18 @@
         "sourceMap": true,
         "declaration": true,
         "target": "esnext",
-        "outDir": "dist",
-        "rootDir": "lib"
+        "declarationDir": "dist/types",
+        "outDir": "dist/lib",
+        "typeRoots": [
+            "node_modules/@types"
+        ]
     },
     "paths": {
         "tslib": [
             "./node_modules/tslib/tslib.d.ts"
         ]
     },
-    "exclude": ["test","example"]
+    "include": [
+        "lib"
+    ]
 }

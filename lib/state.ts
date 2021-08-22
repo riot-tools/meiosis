@@ -1,43 +1,21 @@
-import Manager, { ManagerOptions } from './manager';
+import StateManager, { StateManagerOptions } from './manager';
 import connectFactory, { ConnectFunction } from './connect';
 
-type AnyState = Object | Array<any> | String | Map<any,any> | Set<any>;
+export type AnyState = Object | Array<any> | String | Map<any,any> | Set<any>;
+export class RiotMeiosis {
 
-export const createStateStream = (
-    initialState: AnyState,
-    options?: ManagerOptions
-): {
-    stream: Manager,
-    connect: ConnectFunction,
-    dispatch: (value: any) => Manager
-} => {
-
-    const stream = new Manager(initialState, options || {});
-
-    const connect = connectFactory(stream);
-
-    const dispatch: (value: any) => any = (value) => (
-        stream.dispatch(value)
-    );
-
-    return { stream, connect, dispatch };
-};
-
-class StateStream {
-
-    stream: Manager = null;
+    stream: StateManager = null;
     connect: ConnectFunction = null;
     dispatch: (value: any) => any = null;
 
-    constructor(initialState: AnyState, options?: ManagerOptions) {
+    constructor(initialState: AnyState, options?: StateManagerOptions) {
 
-        this.stream = new Manager(initialState, options || {});
+        this.stream = new StateManager(initialState, options || {});
         this.connect = connectFactory(this.stream);
         this.dispatch = (value) => (
             this.stream.dispatch(value)
         );
-
     }
 }
 
-export default StateStream;
+export default RiotMeiosis;
