@@ -47,6 +47,7 @@
     "riot": "^6.x.x"
   },
   "dependencies": {
+    "@riot-tools/sak": "^1.0.0",
     "@riot-tools/state-utils": "^1.x.x"
   },
   "devDependencies": {
@@ -64,7 +65,8 @@
     "@riotjs/register": "^5.0.0",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
-    "@types/mocha": "^8.2.2",
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
     "@types/node": "^15.3.0",
     "chai": "^4",
     "cz-conventional-changelog": "^3",
