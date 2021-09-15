@@ -1,3 +1,10 @@
+## [2.0.1-next.1](https://github.com/riot-tools/meiosis/compare/v2.0.0...v2.0.1-next.1) (2021-09-15)
+
+
+### Bug Fixes
+
+* 🐛 rework typings ([d654c54](https://github.com/riot-tools/meiosis/commit/d654c54dbe37c93a4a8f8a855f477b4032e33433))
+
 # [2.0.0](https://github.com/riot-tools/meiosis/compare/v1.2.0...v2.0.0) (2021-08-22)
 
 
