@@ -4,7 +4,7 @@
   "description": "Dependency free state manager for Riot inspired by Meiosis pattern",
   "main": "dist/umd.js",
   "module": "dist/es.js",
-  "browser": "dist/iife.js",
+  "cdn": "dist/iife.js",
   "typings": "dist/types/index.d.ts",
   "files": [
     "dist",
@@ -47,8 +47,8 @@
     "riot": "^6.x.x"
   },
   "dependencies": {
-    "@riot-tools/sak": "^1.0.0",
-    "@riot-tools/state-utils": "^1.x.x"
+    "@riot-tools/state-utils": "^1.x.x",
+    "@riot-tools/sak": "^1.x.x"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -57,7 +57,6 @@
     "@babel/register": "^7.12.13",
     "@commitlint/cli": "^11",
     "@commitlint/config-conventional": "^11",
-    "@riot-tools/state-utils": "^1.x.x",
     "@riotjs/cli": "^5",
     "@riotjs/compiler": "^6.0.3",
     "@riotjs/hot-reload": "^6.0.0",
