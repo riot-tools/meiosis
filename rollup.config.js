@@ -23,14 +23,6 @@ export default [
         ],
         output: [
             {
-                name: libraryName,
-                file: pkg.browser,
-                format: 'iife',
-                sourcemap: true,
-                inlineDynamicImports: true,
-                globals
-            },
-            {
                 file: pkg.module,
                 format: 'es',
                 sourcemap: true
@@ -40,6 +32,14 @@ export default [
                 name: libraryName,
                 format: 'umd',
                 sourcemap: true
+            },
+            {
+                name: libraryName,
+                file: pkg.cdn,
+                format: 'iife',
+                sourcemap: true,
+                inlineDynamicImports: true,
+                globals
             }
         ],
         external: [

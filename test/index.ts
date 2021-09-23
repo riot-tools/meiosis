@@ -2,6 +2,7 @@ import { clone } from '@riot-tools/state-utils';
 import { expect } from 'chai';
 
 import { RiotMeiosis } from '../lib';
+import StateManager from '../lib/manager';
 
 console.warn = () => {};
 
@@ -33,14 +34,14 @@ const stub: any = {
 
             const retrn = stub.wasUpdated(val);
 
-            if (stub.connected) {
+            if (stub.meiosis.connected) {
 
-                const { mapToState, connected, props } = stub;
+                const { mapToState, meiosis: { connected }, props } = stub;
                 const { onUpdated, state } = connected;
 
                 // Make connect aware of state changes by faking
                 // component lifecycle
-                onUpdated({}, mapToState(stub.stream.state(), state, props));
+                onUpdated({}, mapToState(stub.meiosis.stream.state(), state, props));
             }
 
             return retrn;
@@ -63,38 +64,35 @@ describe('Riot Meiosis', function () {
 
     it('should create an instance', function () {
 
-        const reducer = (newState, oldState) => ({
-            ...oldState,
-            ...newState
-        });
-
         const meiosis = new RiotMeiosis(stub.state);
 
-        expect(meiosis).to.include.keys('stream', 'connect', 'dispatch');
+        expect(meiosis.stream).to.be.instanceOf(StateManager);
+        expect(meiosis.connect).to.be.a.instanceOf(Function);
+        expect(meiosis.dispatch).to.be.a.instanceOf(Function);
 
-        Object.assign(stub, meiosis);
+       stub.meiosis = meiosis;
     });
 
     it('should get the current state', function () {
 
-        expect(stub.stream.state()).to.eql(stub.state);
+        expect(stub.meiosis.stream.state()).to.eql(stub.state);
     });
 
 
     it('should not connect if state mapper is undefined or bad', function () {
 
-        expect(() => stub.connect()).to.throw(/mapToState must be a function/);
-        expect(() => stub.connect({})).to.throw(/mapToState must be a function/);
-        expect(() => stub.connect([])).to.throw(/mapToState must be a function/);
+        expect(() => stub.meiosis.connect()).to.throw(/mapToState must be a function/);
+        expect(() => stub.meiosis.connect({})).to.throw(/mapToState must be a function/);
+        expect(() => stub.meiosis.connect([])).to.throw(/mapToState must be a function/);
     });
 
     it('should not connect if component mapper is bad', function () {
 
         const fn = () => {};
 
-        expect(() => stub.connect(fn, 1)).to.throw(/mapToComponent must be a function or object/);
-        expect(() => stub.connect(fn, [])).to.throw(/mapToComponent must be a function or object/);
-        expect(() => stub.connect(fn, "lol")).to.throw(/mapToComponent must be a function or object/);
+        expect(() => stub.meiosis.connect(fn, 1)).to.throw(/mapToComponent must be a function or object/);
+        expect(() => stub.meiosis.connect(fn, [])).to.throw(/mapToComponent must be a function or object/);
+        expect(() => stub.meiosis.connect(fn, "lol")).to.throw(/mapToComponent must be a function or object/);
     });
 
     it('should return connect HOF', function () {
@@ -102,19 +100,19 @@ describe('Riot Meiosis', function () {
         const fn = () => ({})
 
         // No map to component
-        expect(() => stub.connect(fn)).to.not.throw();
+        expect(() => stub.meiosis.connect(fn)).to.not.throw();
 
         // map to component object
-        expect(() => stub.connect(fn, {})).to.not.throw();
+        expect(() => stub.meiosis.connect(fn, {})).to.not.throw();
 
         // map to component function
-        expect(() => stub.connect(fn, fn)).to.not.throw();
+        expect(() => stub.meiosis.connect(fn, fn)).to.not.throw();
     });
 
     it('should connect state to component', function () {
 
         const component = clone(stub.component);
-        const connected = stub.connect(stub.mapToState)(component);
+        const connected = stub.meiosis.connect(stub.mapToState)(component);
 
         expect(connected.state).to.have.keys('something');
         expect(connected.state).to.not.have.keys('hasCandy');
@@ -131,7 +129,7 @@ describe('Riot Meiosis', function () {
         expect(ranOriginal).to.be.true;
         expect(connected.state).to.have.keys('hasCandy', 'something', 'props');
 
-        stub.connected = connected;
+        stub.meiosis.connected = connected;
     });
 
 
@@ -151,19 +149,19 @@ describe('Riot Meiosis', function () {
                 expect(update.shemoves).to.be.true;
 
                 // fake update component state
-                stub.connected.state = update;
+                stub.meiosis.connected.state = update;
 
                 q.rs();
             }
             catch (e) {
                 q.rj(e);
             }
-            stub.stream.removeListener(runTest);
+            stub.meiosis.stream.removeListener(runTest);
         };
 
-        stub.stream.addListener(runTest);
+        stub.meiosis.stream.addListener(runTest);
 
-        stub.dispatch({
+        stub.meiosis.dispatch({
             nestedState: {
                 ...stub.state.nestedState,
                 shemoves: true
@@ -191,12 +189,12 @@ describe('Riot Meiosis', function () {
             catch (e) {
                 q.rj(e);
             }
-            stub.stream.removeListener(runTest);
+            stub.meiosis.stream.removeListener(runTest);
         };
 
-        stub.stream.addListener(runTest);
+        stub.meiosis.stream.addListener(runTest);
 
-        stub.dispatch({
+        stub.meiosis.dispatch({
             nestedState: {
                 ...stub.state.nestedState
             }
@@ -225,15 +223,15 @@ describe('Riot Meiosis', function () {
             catch (e) {
                 q.rj(e);
             }
-            stub.stream.removeListener(runTest);
+            stub.meiosis.stream.removeListener(runTest);
         };
 
-        stub.stream.addListener(runTest);
+        stub.meiosis.stream.addListener(runTest);
 
-        stub.connected.onBeforeUnmount();
+        stub.meiosis.connected.onBeforeUnmount();
 
         // trigger a change
-        stub.dispatch({
+        stub.meiosis.dispatch({
             nestedState: {
                 ...stub.state.nestedState,
                 shemoves: 50
@@ -250,7 +248,7 @@ describe('Riot Meiosis', function () {
             fulanito: () => 'perez'
         };
 
-        const connected = stub.connect(stub.mapToState, actions)(component);
+        const connected = stub.meiosis.connect(stub.mapToState, actions)(component);
 
         stub.wasMounted = () => {};
 
@@ -281,7 +279,7 @@ describe('Riot Meiosis', function () {
             };
         };
 
-        const connected = stub.connect(stub.mapToState, actions)(component);
+        const connected = stub.meiosis.connect(stub.mapToState, actions)(component);
 
         stub.wasMounted = () => {};
 
@@ -311,7 +309,7 @@ describe('Riot Meiosis', function () {
             onBeforeMount.bind(component)(props, state);
         }
 
-        const connected = stub.connect(stub.mapToState)(component);
+        const connected = stub.meiosis.connect(stub.mapToState)(component);
 
         expect(connected.state).to.not.have.keys('definedLater');
 
