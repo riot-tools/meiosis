@@ -1,3 +1,11 @@
+## [2.0.1](https://github.com/riot-tools/meiosis/compare/v2.0.0...v2.0.1) (2021-09-23)
+
+
+### Bug Fixes
+
+* 🐛 play nice with typescript ([f1f9e42](https://github.com/riot-tools/meiosis/commit/f1f9e42835f64e8912203ebae6f173844d019c63))
+* 🐛 rework typings ([d654c54](https://github.com/riot-tools/meiosis/commit/d654c54dbe37c93a4a8f8a855f477b4032e33433))
+
 ## [2.0.1-next.2](https://github.com/riot-tools/meiosis/compare/v2.0.1-next.1...v2.0.1-next.2) (2021-09-22)
 
 
