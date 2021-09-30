@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/riot-tools/meiosis/compare/v2.0.1...v2.0.2) (2021-09-30)
+
+
+### Bug Fixes
+
+* 🐛 lexical this on dispatch ([fee1d49](https://github.com/riot-tools/meiosis/commit/fee1d49567a6a13de06e1bc8abd6388fa38f2c3f))
+
 ## [2.0.1](https://github.com/riot-tools/meiosis/compare/v2.0.0...v2.0.1) (2021-09-23)
 
 
