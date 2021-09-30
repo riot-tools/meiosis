@@ -39,10 +39,26 @@ export type RiotMeiosisComponent = {
 export class RiotMeiosis {
 
     stream?: StateManager = null;
+    dispatch: (state: any) => StateManager = null;
+    addListener: (listener: Function) => { removeListener: Function };
 
     constructor(initialState: AnyState, options?: StateManagerOptions) {
 
+        const self = this;
+
         this.stream = new StateManager(initialState, options || {});
+
+        this.dispatch = (value) => self.stream.dispatch(value);
+        this.addListener = (listener) => {
+
+            self.stream.addListener(listener);
+
+            return {
+                removeListener: () => (
+                    self.stream.removeListener(listener)
+                )
+            };
+        }
     }
 
     private __wrapComponent <C>(
@@ -75,7 +91,7 @@ export class RiotMeiosis {
         };
 
         // Dispatch directly from the component
-        component.dispatch = (value: any) => stateManager.dispatch(value);
+        component.dispatch = (value) => stateManager.dispatch(value);
 
         // Merge global state to local state.
         // Global state supersedes local state.
@@ -159,10 +175,6 @@ export class RiotMeiosis {
         );
     }
 
-    dispatch(value: any) {
-
-        return this.stream.dispatch(value);
-    }
 }
 
 export default RiotMeiosis;
