@@ -2,51 +2,43 @@ import { RiotComponent } from "riot";
 import { deepEqual } from '@riot-tools/state-utils';
 import { makeOnBeforeUnmount, makeOnUpdated } from '@riot-tools/sak';
 
-import StateManager, { StateManagerOptions } from './manager';
+import StateManager, { ListenerFunction, StateManagerOptions } from './manager';
 import { isFunctionOrObject } from './helpers';
 
 
 export type AnyState = Object | Array<any> | String | Map<any,any> | Set<any>;
 
 export interface MapToStateFunction<N, C, P> {
-    (newState: N, componentState: C, componentProps: P): any
+    (newState: N, componentState: C, componentProps: P): Partial<C>
 };
 
 export interface MapToComponentFunction<P, S> {
-    (props: P, state: S): any
+    (props: P, state: S): Partial<P>
 };
 
-type ConnectInternalStore = {
-    update?: RiotComponent['update'],
-    componentState?: Object,
-    componentProps?: Object,
-    onBeforeMount?: RiotComponent['onBeforeMount'],
-    onBeforeUnmount?: RiotComponent['onBeforeUnmount'],
-    onUpdated?: RiotComponent['onUpdated'],
+type ConnectInternalStore<AppState, Props, State> = Partial<RiotComponent<Props, State>> & {
+    componentState?: State,
+    componentProps?: Props,
     listener?: {
-        (newState: Object): any
+        (newState: AppState): void
     },
 };
 
-export type RiotMeiosisComponent = {
-    dispatch: (value: any) => any,
-    onBeforeMount?: RiotComponent['onBeforeMount'],
-    onBeforeUnmount?: RiotComponent['onBeforeUnmount'];
-    onUpdated?: RiotComponent['onUpdated'];
-    update?: RiotComponent['update'];
-};
+export type RiotMeiosisComponent<AppState = any, ReducerVal = any, Props = any, State = any> = {
+    dispatch: (value: AppState | ReducerVal) => void
+} & Partial<RiotComponent<Props, State>>;
 
-export class RiotMeiosis {
+export class RiotMeiosis<AppState, ReducerValue> {
 
     stream?: StateManager = null;
-    dispatch: (state: any) => StateManager = null;
-    addListener: (listener: Function) => { removeListener: Function };
+    dispatch: (state: AppState|ReducerValue) => StateManager = null;
+    addListener: (listener: ListenerFunction<AppState>) => { removeListener: Function };
 
-    constructor(initialState: AnyState, options?: StateManagerOptions) {
+    constructor(initialState: AppState, options?: StateManagerOptions) {
 
         const self = this;
 
-        this.stream = new StateManager(initialState, options || {});
+        this.stream = new StateManager <AppState, ReducerValue>(initialState, options || {});
 
         this.dispatch = (value) => self.stream.dispatch(value);
         this.addListener = (listener) => {
@@ -61,15 +53,19 @@ export class RiotMeiosis {
         }
     }
 
-    private __wrapComponent <C>(
-        component: C & RiotMeiosisComponent,
-        mapToState: MapToStateFunction<any,any,any>,
-        mapToComponent?: MapToComponentFunction<any,any>|Object
-    ): C & RiotMeiosisComponent {
+    private __wrapComponent <
+        Props,
+        State,
+        C extends RiotMeiosisComponent
+    >(
+        component: C,
+        mapToState: MapToStateFunction<AppState, State, Props>,
+        mapToComponent?: MapToComponentFunction<Props, State> | Partial<Props>
+    ): C & RiotMeiosisComponent<AppState, ReducerValue, Props, State> {
 
         const stateManager = this.stream;
 
-        const store: ConnectInternalStore = {
+        const store: ConnectInternalStore<AppState, Props, State> = {
             update: null,
             componentState: null,
             componentProps: null,
@@ -95,7 +91,7 @@ export class RiotMeiosis {
 
         // Merge global state to local state.
         // Global state supersedes local state.
-        component.onBeforeMount = function (props: Object, state = {}) {
+        component.onBeforeMount = function (props, state) {
 
             store.update = (...args: any[]) => this.update.apply(this, args);
 
@@ -129,7 +125,7 @@ export class RiotMeiosis {
             }
         };
 
-        makeOnUpdated(component, function <P, S>(_props: P, state: S) {
+        makeOnUpdated(component, function(_props, state) {
 
             store.componentState = state;
 
@@ -155,9 +151,9 @@ export class RiotMeiosis {
         return component;
     };
 
-    connect(
-        mapToState: MapToStateFunction<any,any,any>,
-        mapToComponent?: MapToComponentFunction<any,any>|Object
+    connect <State = any, Props = any>(
+        mapToState: MapToStateFunction<AppState, State, Props>,
+        mapToComponent?: MapToComponentFunction<Props, State>|Props
     ) {
 
         if (!mapToState || mapToState.constructor !== Function) {
@@ -170,7 +166,7 @@ export class RiotMeiosis {
             throw TypeError('mapToComponent must be a function or object');
         }
 
-        return <C>(component: C & RiotMeiosisComponent) => (
+        return <C extends RiotMeiosisComponent<AppState, ReducerValue, State, Props>>(component: C) => (
             this.__wrapComponent(component, mapToState, mapToComponent)
         );
     }
