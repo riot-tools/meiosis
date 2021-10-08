@@ -1,3 +1,10 @@
+## [2.0.1-next.4](https://github.com/riot-tools/meiosis/compare/v2.0.1-next.3...v2.0.1-next.4) (2021-10-08)
+
+
+### Bug Fixes
+
+* 🐛 adding generics to state manager ([60c7807](https://github.com/riot-tools/meiosis/commit/60c7807c30ca51a57a86ed823d8e7a00032af831))
+
 ## [2.0.1-next.3](https://github.com/riot-tools/meiosis/compare/v2.0.1-next.2...v2.0.1-next.3) (2021-09-30)
 
 
