@@ -1,7 +1,6 @@
 {
   "name": "@riot-tools/meiosis",
-  "version": "2.0.1-next.4",
-
+  "version": "2.0.3-next.1",
   "description": "Dependency free state manager for Riot inspired by Meiosis pattern",
   "main": "dist/umd.js",
   "module": "dist/es.js",
