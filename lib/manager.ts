@@ -24,16 +24,20 @@ export type StateManagerOptions = {
     bidirectional?: boolean;
 };
 
-export type StateManagerState = {
+export type StateManagerState<State = any> = {
 
-    state?: any;
+    state?: Readonly<State>;
     currentState?: number|null;
     latestState?: number|null;
     parentListener?: Function|null;
     childListener?: Function|null;
 };
 
-export type ReducerFunction = (value: any, state?: any, ignore?: symbol) => any
+export interface ReducerFunction<State = any, Value = State> {
+    (value: Partial<Value>, state?: State, ignore?: symbol): State | symbol
+}
+
+export type ListenerFunction<State = any> = (newState: State, oldState: State, flow?: StateManager[]) => void
 
 // For skipping state modification
 const IGNORE = Symbol();
@@ -42,7 +46,7 @@ const DEFAULT_OPTIONS: StateManagerOptions = {
     statesToKeep: 5
 };
 
-export class StateManager {
+export class StateManager<State = any, ReducerValue = any> {
 
     _options: StateManagerOptions|null = null;
 
@@ -53,11 +57,11 @@ export class StateManager {
         return this._sid++;
     }
 
-    _internals: StateManagerState;
-    _states: Map<number, any>|null = null;
+    _internals: StateManagerState<State>;
+    _states: Map<number, State>|null = null;
 
-    _reducers: Set<ReducerFunction>|null = null;
-    _listeners: Set<Function>|null = null;
+    _reducers: Set<ReducerFunction<ReducerValue, State>>|null = null;
+    _listeners: Set<ListenerFunction<State>>|null = null;
 
     _parent: StateManager|null = null;
 
@@ -88,7 +92,7 @@ export class StateManager {
         this._addState(initialState);
     }
 
-    private _setInternals(updates: StateManagerState) {
+    private _setInternals(updates: StateManagerState<State>) {
 
         this._internals = {
             ...this._internals,
@@ -98,7 +102,7 @@ export class StateManager {
         deepFreeze(this._internals);
     }
 
-    private _addState(state: any) {
+    private _addState(state: State) {
 
         const { statesToKeep } = this._options;
         const { _states } = this;
@@ -121,7 +125,7 @@ export class StateManager {
         });
     }
 
-    private _notifyListeners(newState: any, oldState: any, flow?: StateManager[]) {
+    private _notifyListeners(newState: State, oldState: State, flow?: StateManager[]) {
 
         // Notify listeners
         for (const listener of this._listeners) {
@@ -134,7 +138,8 @@ export class StateManager {
      * @param value New state
      * @param {Array} flow This can be ignored. Tracks flow of incoming updates to prevent double updates on clones.
      */
-    dispatch(value: any, flow?: StateManager[]) {
+    dispatch(value: ReducerValue, flow?: StateManager[]);
+    dispatch(value: Partial<State>, flow?: StateManager[]) {
 
         /**
          * If the update is coming back to itself, do not update.
@@ -184,12 +189,12 @@ export class StateManager {
 
         // Save new state to holder
         if (!valueIsUndefined) {
-            this._addState(nextState);
+            this._addState(nextState as State);
         }
 
         // Notify listeners
         if (_listeners.size) {
-            this._notifyListeners(nextState, currentState, flow);
+            this._notifyListeners(nextState as State, currentState, flow);
 
             if (flushOnRead) {
                 this.flushStates();
@@ -244,7 +249,7 @@ export class StateManager {
      * @param {function} fns
      * @returns {StateManager} manager instance
      */
-    addListener(...fns: Function[]) {
+    addListener(...fns: ListenerFunction[]) {
 
         for (const fn of fns) {
             assertFunction('listener', fn);
@@ -262,7 +267,7 @@ export class StateManager {
      * @param {function} func
      * @returns {StateManager} manager instance
      */
-    removeListener(...fns: Function[]) {
+    removeListener(...fns: ListenerFunction[]) {
 
         for (const fn of fns) {
 
@@ -282,14 +287,14 @@ export class StateManager {
      */
     states() {
 
-        return Array.from(this._states.values());
+        return clone(Array.from(this._states.values()));
     }
 
     /**
      * Returns current state
      * @returns {*} Current state
      */
-    state() {
+    state(): State {
 
         return clone(this._internals.state);
     }
@@ -406,7 +411,7 @@ export class StateManager {
      */
     clone(options: StateManagerOptions = {}) {
 
-        return new StateManager(
+        return new StateManager<State, ReducerValue>(
             this.state(),
             {
                 ...this._options,
@@ -433,7 +438,7 @@ export class StateManager {
         /**
          * Add listener to parent to pass updates to cloned instance
          */
-        const updateChild = (value: any, _: any, flow?: StateManager[]) => {
+        const updateChild = (value, _, flow?: StateManager[]) => {
 
             if (flow) {
                 flow.push(self);
@@ -456,7 +461,7 @@ export class StateManager {
              * child in order to prevent maximum call stack.
              * @param value
              */
-            const updateParent = (value: any, _: any, flow?: StateManager[]) => {
+            const updateParent = (value: State, _: State, flow?: StateManager[]) => {
 
                 if (flow) {
                     flow.push(self);
