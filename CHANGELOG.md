@@ -11,7 +11,6 @@
 ### Bug Fixes
 
 * 🐛 lexical this on dispatch ([fee1d49](https://github.com/riot-tools/meiosis/commit/fee1d49567a6a13de06e1bc8abd6388fa38f2c3f))
-
 ## [2.0.1-next.2](https://github.com/riot-tools/meiosis/compare/v2.0.1-next.1...v2.0.1-next.2) (2021-09-22)
 
 
