@@ -1,3 +1,11 @@
+## [2.0.4](https://github.com/riot-tools/meiosis/compare/v2.0.3...v2.0.4) (2021-10-15)
+
+
+### Bug Fixes
+
+* 🐛 bug in the dispatch typings ([6b76af5](https://github.com/riot-tools/meiosis/commit/6b76af52a23621cd98457f410cf23a217c913483))
+* state manager generics ([447217b](https://github.com/riot-tools/meiosis/commit/447217bf0c13c0d702f91ba30588542c42de1949))
+
 ## [2.0.3](https://github.com/riot-tools/meiosis/compare/v2.0.2...v2.0.3) (2021-10-12)
 
 
