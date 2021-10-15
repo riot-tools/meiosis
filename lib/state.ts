@@ -31,7 +31,7 @@ export type RiotMeiosisComponent<AppState = any, ReducerVal = any, Props = any, 
 export class RiotMeiosis<AppState, ReducerValue> {
 
     stream?: StateManager<AppState, ReducerValue> = null;
-    dispatch: (state: AppState|ReducerValue) => StateManager<AppState, ReducerValue> = null;
+    dispatch: StateManager<AppState, ReducerValue>['dispatch'] = null;
     addListener: (listener: ListenerFunction<AppState>) => { removeListener: Function };
 
     constructor(initialState: AppState, options?: StateManagerOptions) {

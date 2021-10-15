@@ -124,11 +124,11 @@ describe('State Manager', function () {
         const { stream } = new RiotMeiosis({});
         stream.addReducer(stub.reducer);
 
-        expect(stream.state().updated).to.eq(undefined);
+        expect((stream.state() as any).updated).to.eq(undefined);
 
         stream.dispatch({ updated: false });
 
-        expect(stream.state().updated).to.eq(true);
+        expect((stream.state() as any).updated).to.eq(true);
 
     });
 
