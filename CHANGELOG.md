@@ -1,3 +1,10 @@
+## [2.0.5](https://github.com/riot-tools/meiosis/compare/v2.0.4...v2.0.5) (2021-10-22)
+
+
+### Bug Fixes
+
+* 🐛 state utils dependency ([2ce63ef](https://github.com/riot-tools/meiosis/commit/2ce63ef6febc1f02915062a407708dee427a4268))
+
 ## [2.0.4](https://github.com/riot-tools/meiosis/compare/v2.0.3...v2.0.4) (2021-10-15)
 
 
