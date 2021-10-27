@@ -10,6 +10,7 @@
         "pretty": true,
         "sourceMap": true,
         "declaration": true,
+        "noImplicitThis": true,
         "target": "esnext",
         "declarationDir": "dist/types",
         "outDir": "dist/lib",

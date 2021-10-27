@@ -239,27 +239,6 @@ describe('Riot Meiosis', function () {
         });
     });
 
-    it('should map object to component', function () {
-
-        const component = clone(stub.component);
-
-        const actions = {
-            pepe: () => 'billete',
-            fulanito: () => 'perez'
-        };
-
-        const connected = stub.meiosis.connect(stub.mapToState, actions)(component);
-
-        stub.wasMounted = () => {};
-
-        // pretend to mount
-        connected.onBeforeMount(stub.props, connected.state);
-
-        expect(connected).to.include.keys('pepe', 'fulanito');
-        expect(connected.pepe()).to.equal(actions.pepe());
-        expect(connected.fulanito()).to.equal(actions.fulanito());
-    });
-
     it('should map function to component', function () {
 
         const component = clone(stub.component);
