@@ -1,3 +1,15 @@
+# [3.0.0-next.1](https://github.com/riot-tools/meiosis/compare/v2.0.5...v3.0.0-next.1) (2021-10-27)
+
+
+### Bug Fixes
+
+* 🐛 typings, upgrade dependencies ([e76c75f](https://github.com/riot-tools/meiosis/commit/e76c75f9fad0bb072e8a9a3ea8412493b6743089))
+
+
+### BREAKING CHANGES
+
+* 🧨 mapToComponent no longer accepts an object
+
 ## [2.0.5](https://github.com/riot-tools/meiosis/compare/v2.0.4...v2.0.5) (2021-10-22)
 
 
