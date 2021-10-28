@@ -9,12 +9,17 @@ import { isFunctionOrObject } from './helpers';
 export type AnyState = Object | Array<any> | String | Map<any,any> | Set<any>;
 
 export interface MapToStateFunction<N, C, P> {
-    (newState: N, componentState: C, componentProps: P): Partial<C>
+    (newState: N, componentState: C, componentProps: P): C
 };
 
-export interface MapToComponentFunction<P, S> {
+export interface MapToComponentFunction<P = any, S = any> {
     (props: P, state: S): Partial<P>
 };
+
+type ConnectedComponent<A, R, P, S> = (
+    Partial<RiotMeiosisComponent<A, R>> &
+    Partial<RiotComponent<P, S>>
+)
 
 type ConnectInternalStore<AppState, Props, State> = Partial<RiotComponent<Props, State>> & {
     componentState?: State,
@@ -24,9 +29,9 @@ type ConnectInternalStore<AppState, Props, State> = Partial<RiotComponent<Props,
     },
 };
 
-export type RiotMeiosisComponent<AppState = any, ReducerVal = any, Props = any, State = any> = {
-    dispatch: (value: AppState | ReducerVal) => void
-} & Partial<RiotComponent<Props, State>>;
+export type RiotMeiosisComponent<AppState = any, ReducerVal = any> = {
+    dispatch?: (value: AppState | ReducerVal) => void
+};
 
 export class RiotMeiosis<AppState, ReducerValue> {
 
@@ -56,12 +61,12 @@ export class RiotMeiosis<AppState, ReducerValue> {
     private __wrapComponent <
         Props,
         State,
-        C extends RiotMeiosisComponent
+        C extends ConnectedComponent<AppState, ReducerValue, Props, State>
     >(
         component: C,
         mapToState: MapToStateFunction<AppState, State, Props>,
-        mapToComponent?: MapToComponentFunction<Props, State> | Partial<Props>
-    ): C & RiotMeiosisComponent<AppState, ReducerValue, Props, State> {
+        mapToComponent?: MapToComponentFunction<Props, State>
+    ): C {
 
         const stateManager = this.stream;
 
@@ -109,15 +114,12 @@ export class RiotMeiosis<AppState, ReducerValue> {
             store.componentState = this.state;
             store.componentProps = props;
 
-
             if (mapToComponent) {
 
-                if (typeof mapToComponent === 'function') {
-                    mapToComponent = mapToComponent(props, state);
-                }
+                let assign = mapToComponent(props, state);
 
-                if (typeof mapToComponent === 'object') {
-                    Object.assign(component, mapToComponent);
+                if (typeof assign === 'object') {
+                    Object.assign(component, assign);
                 }
                 else {
                     throw TypeError('mapToComponent must return an object');
@@ -125,7 +127,7 @@ export class RiotMeiosis<AppState, ReducerValue> {
             }
         };
 
-        makeOnUpdated(component, function(_props, state) {
+        makeOnUpdated <Props, State, C>(component, function(_props, state) {
 
             store.componentState = state;
 
@@ -135,10 +137,10 @@ export class RiotMeiosis<AppState, ReducerValue> {
 
         // wrap the onUnmounted callback to end the cloned stream
         // when the component will be unmounted
-        makeOnBeforeUnmount(component, function (...args: any[]) {
+        makeOnBeforeUnmount <Props, State, C>(component, function (this: C, props, state) {
 
             if (store.onBeforeUnmount) {
-                store.onBeforeUnmount.apply(this, args);
+                store.onBeforeUnmount.apply(this, [props, state]);
             }
 
             if (store.listener) {
@@ -151,9 +153,9 @@ export class RiotMeiosis<AppState, ReducerValue> {
         return component;
     };
 
-    connect <State = any, Props = any>(
+    connect <Props = any, State = any>(
         mapToState: MapToStateFunction<AppState, State, Props>,
-        mapToComponent?: MapToComponentFunction<Props, State>|Props
+        mapToComponent?: MapToComponentFunction<Props, State>
     ) {
 
         if (!mapToState || mapToState.constructor !== Function) {
@@ -166,11 +168,13 @@ export class RiotMeiosis<AppState, ReducerValue> {
             throw TypeError('mapToComponent must be a function or object');
         }
 
-        return <C extends RiotMeiosisComponent<AppState, ReducerValue, State, Props>>(component: C) => (
-            this.__wrapComponent(component, mapToState, mapToComponent)
+        return <
+            C extends ConnectedComponent<AppState, ReducerValue, Props, State>
+        >(component: C) => (
+
+            this.__wrapComponent <Props, State, C>(component, mapToState, mapToComponent)
         );
     }
-
 }
 
 export default RiotMeiosis;

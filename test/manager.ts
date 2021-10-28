@@ -1,7 +1,5 @@
 import { expect } from 'chai';
-
 import { RiotMeiosis } from '../lib';
-
 
 const stub: any = {
 
@@ -381,4 +379,5 @@ describe('State Manager', function () {
         expect(stream.state()).to.include.keys('parent', 'child');
 
     });
+
 });

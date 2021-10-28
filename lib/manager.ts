@@ -138,8 +138,7 @@ export class StateManager<State = any, ReducerValue = any> {
      * @param value New state
      * @param {Array} flow This can be ignored. Tracks flow of incoming updates to prevent double updates on clones.
      */
-    dispatch(value: ReducerValue, flow?: StateManager[]);
-    dispatch(value: Partial<State>, flow?: StateManager[]) {
+    dispatch(value: Partial<State>|ReducerValue, flow?: StateManager[]) {
 
         /**
          * If the update is coming back to itself, do not update.
