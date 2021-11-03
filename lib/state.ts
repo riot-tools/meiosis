@@ -39,6 +39,8 @@ export class RiotMeiosis<AppState, ReducerValue> {
     dispatch: StateManager<AppState, ReducerValue>['dispatch'] = null;
     addListener: (listener: ListenerFunction<AppState>) => { removeListener: Function };
 
+    connect: (...args: Parameters<RiotMeiosis<AppState, ReducerValue>['__connect']>) => unknown
+
     constructor(initialState: AppState, options?: StateManagerOptions) {
 
         const self = this;
@@ -56,6 +58,8 @@ export class RiotMeiosis<AppState, ReducerValue> {
                 )
             };
         }
+
+        this.connect = (...args) => self.__connect(...args);
     }
 
     private __wrapComponent <
@@ -153,7 +157,7 @@ export class RiotMeiosis<AppState, ReducerValue> {
         return component;
     };
 
-    connect <Props = any, State = any>(
+    private __connect <Props = any, State = any>(
         mapToState: MapToStateFunction<AppState, State, Props>,
         mapToComponent?: MapToComponentFunction<Props, State>
     ) {
