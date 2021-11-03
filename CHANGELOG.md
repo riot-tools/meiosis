@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/riot-tools/meiosis/compare/v3.0.0...v3.0.1) (2021-11-03)
+
+
+### Bug Fixes
+
+* 🐛 wrap connect function to support destructure ([edafcf3](https://github.com/riot-tools/meiosis/commit/edafcf38564d9abcf3e833d77b23fd8fdb3f3015))
+
 # [3.0.0](https://github.com/riot-tools/meiosis/compare/v2.0.5...v3.0.0) (2021-10-28)
 
 
