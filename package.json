@@ -80,7 +80,7 @@
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-terser": "^7",
     "rollup-plugin-typescript2": "^0.30.0",
-    "semantic-release": "^17",
+    "semantic-release": "^19",
     "sinon": "^11.1.2",
     "ts-node": "^9.1.1",
     "typescript": "^4"
