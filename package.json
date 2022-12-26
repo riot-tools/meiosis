@@ -47,7 +47,7 @@
     "riot": "^6.x.x"
   },
   "dependencies": {
-    "@riot-tools/sak": "^2.x.x",
+    "@riot-tools/sak": "^2.1.0",
     "@riot-tools/state-utils": "1.2.3"
   },
   "devDependencies": {
