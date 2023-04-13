@@ -44,7 +44,7 @@
     ]
   },
   "peerDependencies": {
-    "riot": "^6.x.x"
+    "riot": ">=6.x.x"
   },
   "dependencies": {
     "@riot-tools/sak": "^2.x.x",
@@ -75,15 +75,15 @@
     "jsdom": "^16.5.3",
     "mocha": "^6.1.4",
     "parcel-bundler": "^1.12.5",
-    "riot": "^6.x.x",
+    "riot": ">=6.x.x",
     "rollup": "^2",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-terser": "^7",
     "rollup-plugin-typescript2": "^0.30.0",
     "semantic-release": "^17",
     "sinon": "^11.1.2",
-    "ts-node": "^9.1.1",
-    "typescript": "^4"
+    "ts-node": ">=9.1.1",
+    "typescript": ">=4"
   },
   "commitlint": {
     "extends": [

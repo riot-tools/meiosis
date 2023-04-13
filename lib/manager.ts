@@ -34,7 +34,7 @@ export type StateManagerState<State = any> = {
 };
 
 export interface ReducerFunction<State = any, Value = State> {
-    (value: Partial<Value>, state?: State, ignore?: symbol): State | symbol
+    (value: Partial<Value> | Partial<State>, state?: State, ignore?: symbol): State | symbol
 }
 
 export type ListenerFunction<State = any> = (newState: State, oldState: State, flow?: StateManager[]) => void
