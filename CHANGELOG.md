@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/riot-tools/meiosis/compare/v3.0.1...v3.0.2) (2023-04-13)
+
+
+### Bug Fixes
+
+* 🐛 installable with riot 7 ([53f1bc3](https://github.com/riot-tools/meiosis/commit/53f1bc34c41b93c54574515f52696bce294742d0)), closes [#29](https://github.com/riot-tools/meiosis/issues/29)
+
 ## [3.0.1](https://github.com/riot-tools/meiosis/compare/v3.0.0...v3.0.1) (2021-11-03)
 
 
