@@ -1,5 +1,5 @@
 // TODO: parcel wants to pick up .ts version which doesnt resolve module correctly
-import StateManager from '../dist/es';
+import { RiotMeiosis } from '..';
 
 const initialState = {
     buttonclicked: 0,
@@ -9,19 +9,22 @@ const initialState = {
     ]
 };
 
+export type StateType = typeof initialState;
+export type ReducerVal = Partial<StateType>;
+
 export const {
     stream,
+    dispatch,
     connect,
-    dispatch
-} = new StateManager(initialState, { statesToKeep: 100 });
+    addListener
+} = new RiotMeiosis<StateType, ReducerVal>(initialState, { statesToKeep: 100 });
 
-
-const generalReducer = ({ buttonclicked }, oldState) => ({
+const generalReducer = ({ buttonclicked }: ReducerVal, oldState: StateType) => ({
     ...oldState,
     buttonclicked: buttonclicked || oldState.buttonclicked
 });
 
-const itemsReducer = ({ items }, oldState) => ({
+const itemsReducer = ({ items }: ReducerVal, oldState: StateType) => ({
     ...oldState,
     items: items || oldState.items
 });

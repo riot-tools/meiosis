@@ -20,8 +20,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-      - uses: bahmutov/npm-install@v1
-      - run: npx npm-install-peers
-      - run: npm run test
-        env:
-          TS_NODE_COMPILER_OPTIONS: '{"module":"commonjs"}'
+        with:
+          node-version: 20
+      - run: corepack enable
+      - run: pnpm install
+      - run: pnpm build
+      - run: pnpm test

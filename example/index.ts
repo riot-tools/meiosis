@@ -1,10 +1,17 @@
-import "regenerator-runtime/runtime";
-
+import './types.d.ts';
 import { mount, register } from 'riot';
 
-import SampleComponent from './component';
+import SampleComponent from './component.riot';
 
 import { dispatch, stream } from './state';
+
+declare global {
+
+    interface Window {
+
+        clickme: () => void;
+    }
+}
 
 window.clickme = () => {
 

@@ -11,9 +11,13 @@
     "readme"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "test": "mocha -r esm -r ./test/_setup.js -r ts-node/register 'test/**/*.ts'",
-    "preview": "parcel index.html --open"
+    "build": "rollup --bundleConfigAsCjs -c",
+    "test": "NODE_OPTIONS='--import tsx' NODE_ENV=test mocha -r ./test/_setup.js 'test/**/*.ts'",
+    "lint": "tsc --noEmit",
+    "preview": "parcel index.html --open",
+    "prepare": "husky install",
+    "release": "semantic-release",
+    "commit": "commit"
   },
   "repository": {
     "type": "git",
@@ -55,72 +59,36 @@
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.12.11",
     "@babel/register": "^7.12.13",
-    "@commitlint/cli": "^11",
-    "@commitlint/config-conventional": "^11",
-    "@riotjs/cli": "^5",
-    "@riotjs/compiler": "^6.0.3",
-    "@riotjs/hot-reload": "^6.0.0",
-    "@riotjs/parcel-plugin-riot": "^6.0.0",
-    "@riotjs/register": "^5.0.0",
-    "@semantic-release/changelog": "^5.0.1",
-    "@semantic-release/git": "^9.0.0",
-    "@types/chai": "^4.2.21",
-    "@types/mocha": "^9.0.0",
-    "@types/node": "^15.3.0",
-    "@types/sinon": "^10.0.6",
-    "chai": "^4",
+    "@commitlint/cli": "^19.2.1",
+    "@commitlint/config-conventional": "^19.1.0",
+    "@commitlint/prompt-cli": "^19.2.0",
+    "@parcel/config-default": "^2.12.0",
+    "@riotjs/cli": "^9",
+    "@riotjs/compiler": "^9",
+    "@riotjs/hot-reload": "^9",
+    "@riotjs/parcel-transformer-riot": "^9.0.2",
+    "@riotjs/register": "^9",
+    "@semantic-release/changelog": "^6",
+    "@semantic-release/git": "^10",
+    "@types/chai": "^4",
+    "@types/mocha": "^10",
+    "@types/node": "^20",
+    "@types/sinon": "^17",
+    "chai": "^5",
     "cz-conventional-changelog": "^3",
-    "fast-check": "^2.12.1",
-    "husky": "^4",
-    "jsdom": "^16.5.3",
-    "mocha": "^6.1.4",
-    "parcel-bundler": "^1.12.5",
-    "riot": ">=6.x.x",
-    "rollup": "^2",
+    "fast-check": "^3",
+    "husky": "^9",
+    "jsdom": "^24",
+    "mocha": "^10",
+    "parcel": "^2.12.0",
+    "riot": ">=9",
+    "rollup": "^4",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-terser": "^7",
-    "rollup-plugin-typescript2": "^0.30.0",
-    "semantic-release": "^17",
-    "sinon": "^11.1.2",
-    "ts-node": ">=9.1.1",
-    "typescript": ">=4"
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ],
-    "rules": {
-      "footer-max-line-length": [
-        0,
-        "always"
-      ],
-      "body-max-line-length": [
-        0,
-        "always"
-      ]
-    }
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
-  "release": {
-    "ci": false,
-    "branches": [
-      "+([0-9])?(.{+([0-9]),x}).x",
-      "master",
-      {
-        "name": "next",
-        "prerelease": true
-      }
-    ],
-    "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/changelog",
-      "@semantic-release/release-notes-generator",
-      "@semantic-release/npm",
-      "@semantic-release/git"
-    ]
+    "rollup-plugin-typescript2": "^0.36.0",
+    "semantic-release": "^23",
+    "sinon": "^17",
+    "tsx": "^4.7.1",
+    "typescript": ">=5"
   }
 }
