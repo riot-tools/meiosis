@@ -1,5 +1,9 @@
 node_modules
 .DS_Store
 dist
-package-lock.json
 .cache
+.parcel-cache
+.env
+package-lock.json
+pnpm-lock.yaml
+yarn.lock

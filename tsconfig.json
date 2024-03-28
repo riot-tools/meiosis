@@ -13,15 +13,7 @@
         "noImplicitThis": true,
         "target": "esnext",
         "declarationDir": "dist/types",
-        "outDir": "dist/lib",
-        "typeRoots": [
-            "node_modules/@types"
-        ]
-    },
-    "paths": {
-        "tslib": [
-            "./node_modules/tslib/tslib.d.ts"
-        ]
+        "outDir": "dist/lib"
     },
     "include": [
         "lib"

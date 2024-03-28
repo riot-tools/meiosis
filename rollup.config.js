@@ -5,7 +5,8 @@ import del from 'rollup-plugin-delete';
 import pkg from './package.json';
 
 const globals = {
-    '@riot-tools/state-utils': 'RiotStateUtils'
+    '@riot-tools/state-utils': 'RiotStateUtils',
+    '@riot-tools/sak': 'RiotSak',
 };
 
 const libraryName = 'RiotMeiosis';
@@ -31,7 +32,8 @@ export default [
                 file: pkg.main,
                 name: libraryName,
                 format: 'umd',
-                sourcemap: true
+                sourcemap: true,
+                globals
             },
             {
                 name: libraryName,
