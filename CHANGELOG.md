@@ -1,3 +1,15 @@
+# [4.0.0](https://github.com/riot-tools/meiosis/compare/v3.0.2...v4.0.0) (2024-03-31)
+
+
+### Bug Fixes
+
+* typescript falsity, package upgrades ([e25f8f7](https://github.com/riot-tools/meiosis/commit/e25f8f787fc2fdbdcf86730af8bbabc0602f5979)), closes [#32](https://github.com/riot-tools/meiosis/issues/32) [#30](https://github.com/riot-tools/meiosis/issues/30)
+
+
+### BREAKING CHANGES
+
+* major package upgrades
+
 ## [3.0.2](https://github.com/riot-tools/meiosis/compare/v3.0.1...v3.0.2) (2023-04-13)
 
 
